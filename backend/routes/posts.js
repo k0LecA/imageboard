@@ -1,8 +1,9 @@
 import express from 'express';
-import { getThreadsByBoard, createThread } from '../controllers/threads.js';
-const router = express.Router();
+import { getAllPostsByThread, createPost } from '../controllers/posts.js';
 
-router.get('/:slug', getThreadsByBoard);
-router.post('/:slug', createThread);
+const router = express.Router({ mergeParams: true });
+
+router.get('/', getAllPostsByThread);
+router.post('/', createPost);
 
 export default router;

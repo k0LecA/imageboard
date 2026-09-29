@@ -7,8 +7,7 @@ const app = express();
 app.use(express.json());
 app.use(morgan('dev'));
 
-app.use("/", boardRoutes); 
-app.use("/", threadRoutes)
+app.use("/", boardRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

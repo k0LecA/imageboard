@@ -1,7 +1,7 @@
 import pool from '../configs/dbConfig.js';
 
 const getAllPostsByThread = async (req,res)=>{
-  const threadId=req.params.id;
+  const threadId=req.params.threadId;
   try{
     const results=await pool.query(`
       SELECT * FROM posts WHERE thread_id=$1 ORDER BY id ASC`,[threadId]);
