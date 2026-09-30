@@ -2,20 +2,23 @@ import pool from '../configs/dbConfig.js';
 import crypto from 'crypto';
 
 const signUp = async (req, res) => {
-    const { username, password } = req.body;
-    try {
-        const passwordHash = crypto.createHash('sha256').update(password).digest('hex');
-        const result = await pool.query(`
-          INSERT INTO moderators (username, password_hash, role) VALUES ($1, $2, $3)
-          `, [username, passwordHash, 'admin']);
-        res.status(201).json(result.rows[0]);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+  const data = req.body;
+  const username = data.username;
+  const password = data.password;
+  try {
+    const passwordHash = crypto.createHash('sha256').update(password).digest('hex');
+    const result = await pool.query(`
+      INSERT INTO moderators (username, password_hash, role) VALUES ($1, $2, $3)
+      `, [username, passwordHash, 'admin']);
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
 const signIn = async (req, res) => {
-    const { username, password } = req.body;
+    const username = req.body.username;
+    const password = req.body.password;
     try {
         const passwordHash = crypto.createHash('sha256').update(password).digest('hex');
         const result = await pool.query(`
