@@ -54,6 +54,18 @@ const createThread = async (req,res) => {
   }
 }
 
+const deleteThread = async (req, res) => {
+  const threadId = req.params.threadId;
 
+  try {
+    const result = await pool.query(`DELETE FROM threads WHERE id=$1`, [threadId]);
+    if(!result.rowCount) {
+      return res.status(404).send("Thread not found");
+    }
+    res.status(200).send("Thread deleted");
+  } catch (error) {
+    res.status(500).send(error);
+  }
+}
 
-export { getThreadsByBoard, createThread } ;
+export { getThreadsByBoard, createThread, deleteThread } ;

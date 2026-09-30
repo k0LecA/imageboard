@@ -43,4 +43,18 @@ const createPost = async (req,res) => {
   }
 }
 
-export { getAllPostsByThread, createPost };
+const deletePost = async (req, res) => {
+  const postId = req.params.postId;
+
+  try {
+    const result = await pool.query(`DELETE FROM posts WHERE id=$1`, [postId]);
+    if(!result.rowCount) {
+      return res.status(404).send("Post not found");
+    }
+    res.status(200).send("Post deleted");
+  } catch (error) {
+    res.status(500).send(error);
+  }
+}
+
+export { getAllPostsByThread, createPost, deletePost };
