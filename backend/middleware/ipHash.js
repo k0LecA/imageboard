@@ -5,7 +5,7 @@ if (!secret) {
   throw new Error('HASH_SECRET environment variable not set');
 }
 function hashIp(ip) {
-  const hash = crypto.createHash('sha256');
+  const hash = crypto.createHmac('sha256', secret);
   hash.update(ip);
   return hash.digest('hex');
 }
