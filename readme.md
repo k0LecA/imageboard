@@ -17,6 +17,13 @@ npm install
 npm start                 # node --watch server.js
 ```
 
+## Database
+ 
+PostgreSQL schema: `boards` → `threads` → `posts` → `files`, plus `moderators` and `sessions` for auth. Foreign keys cascade on delete (deleting a board removes its threads, posts, and files). Full schema (tables, indexes, constraints) lives in [`db.sql`](./docs/db.sql).
+ 
+![ER diagram](./docs/er.png)
+
+
 # API Endpoints
 
 ## Auth
