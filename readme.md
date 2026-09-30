@@ -39,7 +39,7 @@ Errors are returned as JSON: `{ "error": "message" }` with an appropriate status
 
 ## Todo
 
-- [ ] ip hashing for posts (for future ban detection)
+- [x] ip hashing for posts (for future ban detection)
 - [ ] `DELETE` thread / post (moderation)
 - [ ] Complete CRUD operations for threads and posts
 - [ ] Input validation (slug, numeric `threadId`, post body length)
