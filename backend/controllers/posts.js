@@ -17,17 +17,20 @@ const getAllPostsByThread = async (req,res)=>{
 const createPost = async (req,res) => {
   const data=req.body;
   const client = await pool.connect();
+  const authorIpHash = req.hashedIp;
 
   try {
     await client.query('BEGIN');
 
+
     const post = await client.query(
       `INSERT INTO posts(thread_id,board_id,author_ip_hash,message)
-        VALUES ($1,$2,'yes',$3)
+        VALUES ($1,$2,$3,$4)
         RETURNING id`,
-      [data.threadId,data.board_id,data.message]);
+      [data.threadId,data.board_id,authorIpHash,data.message]);
 
     const postId= post.rows[0].id;
+
 
     await client.query('COMMIT');
     res.status(201).json({postId});

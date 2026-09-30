@@ -35,11 +35,12 @@ const createThread = async (req,res) => {
       [data.board_id,data.subject]);
 
     const threadId=thread.rows[0].id;
+    const authorIpHash = req.hashedIp;
 
     await client.query(
       `INSERT INTO posts(thread_id,board_id,author_ip_hash,message)
-        VALUES ($1,$2,'yes',$3)`,
-      [threadId,data.board_id,data.message]);
+        VALUES ($1,$2,$3,$4)`,
+      [threadId,data.board_id,authorIpHash,data.message]);
 
     await client.query('COMMIT');
 
