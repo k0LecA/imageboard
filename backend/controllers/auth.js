@@ -24,7 +24,12 @@ const signIn = async (req, res) => {
         if (result.rows.length === 0) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
-        res.status(200).json(result.rows[0]);
+        const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+        const session = await pool.query(`
+          INSERT INTO sessions (moderator_id, expires_at) VALUES ($1, $2)
+          RETURNING id
+          `, [result.rows[0].id, expiresAt]);
+        res.status(200).json({ sessionToken: session.rows[0].id, expiresAt: expiresAt.toISOString() });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
