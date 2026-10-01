@@ -22,4 +22,18 @@ const getBoardBySlug = async (req,res) =>{
   }
 }
 
+const createBoard = async (req, res) => {
+  const { slug, name, bump_limit, max_threads } = req.body;
+  try {
+    const result = await pool.query(`
+      INSERT INTO boards (slug, name, bump_limit, max_threads)
+      VALUES ($1, $2, $3, $4)
+      RETURNING *`,
+      [slug, name, bump_limit, max_threads]);
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.log(`Error creating board ${error}`);
+  }
+};
+
 export { getAllBoards , getBoardBySlug };
