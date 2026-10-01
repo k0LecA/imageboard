@@ -1,4 +1,4 @@
-import pool from '../configs/dbConfig.js';
+import { validateSession } from '../services/authService.js'
 
 const authCheck = async (req, res, next) => {
     const token = req.headers.authorization;
@@ -7,9 +7,8 @@ const authCheck = async (req, res, next) => {
     }
 
     try {
-        const result = await pool.query(`
-          SELECT * FROM sessions WHERE id = $1`, [token]);
-        if (result.rows.length === 0) {
+        const session = await validateSession(token)
+        if (!session) {
             return res.status(401).json({ message: 'Invalid token' });
         }
         next();

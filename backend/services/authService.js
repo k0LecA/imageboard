@@ -24,4 +24,12 @@ const createSession = async (moderatorId) => {
     return session.session_id
 }
 
-export { authenticate, createSession, register }
+const validateSession = async (sessionId) => {
+    const session = await SessionModel.getSessionById(sessionId)
+    if (!session) {
+        throw new Error('Invalid session')
+    }
+    return session
+}
+
+export { authenticate, createSession, register,validateSession }
