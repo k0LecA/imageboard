@@ -12,7 +12,7 @@ const getThreadsByBoard = async (req,res) => {
       [slug]
     );
     if(!results.rows[0]){
-      res.status(404).send("Not found p");
+      return res.status(404).send("Not found p");
     }
     res.status(200).json(results.rows);
   } catch(error){
