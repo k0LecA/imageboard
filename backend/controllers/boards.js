@@ -3,7 +3,7 @@ import * as boardModel from '../models/boards.js'
 
 const getAllBoards = async (req, res) => {
   try{
-    const results = await boardModel.getAllBoards();
+    const results = await boardModel.getBoards();
     res.status(200).json(results);
   } catch (error){
     console.log(`Error listing all boards ${error}`);
