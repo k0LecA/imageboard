@@ -5,5 +5,8 @@
     "morgan": "^1.12.1",
     "pg": "^8.23.0"
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "cors": "^2.8.6"
+  }
 }
