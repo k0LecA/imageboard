@@ -1,4 +1,4 @@
-import pool from '../configs/dbConfig.js';
+import pool from "../configs/dbConfig.js";
 
 const getBoards = async () => {
   const result = await pool.query(`
@@ -8,47 +8,69 @@ const getBoards = async () => {
 };
 
 const getBoardBySlug = async (slug) => {
-  const result = await pool.query(`
+  const result = await pool.query(
+    `
     SELECT * FROM boards
     WHERE slug = $1
-  `, [slug]);
+  `,
+    [slug],
+  );
   return result.rows[0];
 };
 
 const getBoardById = async (id) => {
-  const result = await pool.query(`
+  const result = await pool.query(
+    `
     SELECT * FROM boards
     WHERE id = $1
-  `, [id]);
+  `,
+    [id],
+  );
   return result.rows[0];
 };
 
-const createBoard = async ({ slug, name, bump_limit, max_threads }) => {
-  const result = await pool.query(`
+const createBoard = async ({ slug, name, bumpLimit, maxThreads }) => {
+  const result = await pool.query(
+    `
     INSERT INTO boards (slug, name, bump_limit, max_threads)
     VALUES ($1, $2, $3, $4)
     RETURNING *
-  `, [slug, name, bump_limit, max_threads]);
+  `,
+    [slug, name, bumpLimit, maxThreads],
+  );
   return result.rows[0];
 };
 
-const updateBoardBySlug = async ({ slug, name, bump_limit, max_threads }) => {
-  const result = await pool.query(`
+const updateBoardBySlug = async ({ slug, name, bumpLimit, maxThreads }) => {
+  const result = await pool.query(
+    `
     UPDATE boards
     SET name = $2, bump_limit = $3, max_threads = $4
     WHERE slug = $1
     RETURNING *
-  `, [slug, name, bump_limit, max_threads]);
+  `,
+    [slug, name, bumpLimit, maxThreads],
+  );
   return result.rows[0];
 };
 
-const deleteBoard = async ({ slug }) => {
-  const result = await pool.query(`
+const deleteBoard = async (slug) => {
+  const result = await pool.query(
+    `
     DELETE FROM boards
     WHERE slug = $1
     RETURNING *
-  `, [slug]);
+  `,
+    [slug],
+  );
   return result.rows[0];
 };
 
-export { getBoards, getBoardBySlug, getBoardById, createBoard, updateBoardBySlug, deleteBoard };
+export {
+  getBoards,
+  getBoardBySlug,
+  getBoardById,
+  createBoard,
+  updateBoardBySlug,
+  deleteBoard,
+};
