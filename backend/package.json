@@ -8,5 +8,8 @@
   "type": "module",
   "devDependencies": {
     "cors": "^2.8.6"
+  },
+  "scripts": {
+    "dev": "node --watch server.js"
   }
 }
