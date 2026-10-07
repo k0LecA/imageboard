@@ -29,7 +29,7 @@ CREATE TABLE posts (
     author_ip_hash VARCHAR(64) NOT NULL,
     message        TEXT NOT NULL DEFAULT '',
     created_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
-    message_tsv    tsvector GENERATED ALWAYS AS (to_tsvector('russian', message)) STORED
+    message_tsv    tsvector GENERATED ALWAYS AS (to_tsvector('simple', message)) STORED
 );
 
 CREATE INDEX idx_posts_thread_created ON posts (thread_id, created_at);
