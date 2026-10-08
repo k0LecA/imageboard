@@ -1,34 +1,35 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from 'react-router-dom'
+import { getThreads } from "../services/ThreadService";
+import type { Thread } from "../types/Thread";
 
 function ThreadList ({ slug }: { slug: string }) {
-  const [items, setItems] = useState([]);
-  const [dataIsLoaded, setDataIsLoaded] = useState(false);
+  const [threads, setThreads] = useState<Thread[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null)
+
   useEffect(() => {
-    fetch(`http://localhost:8080/${slug}`)
-              .then((res) => res.json())
-              .then((json) => {
-                  setItems(json);
-                  setDataIsLoaded(true);
-              });
-  }, []);
-  if (!dataIsLoaded) {
-          return (
-              <div>
-                  <h1>Please wait some time....</h1>
-              </div>
-          );
+    getThreads(slug)
+      .then(setThreads)
+      .catch(()=> setError("Server is unreachable"))
+      .finally(()=>setLoading(false))
+  }, [slug]);
+
+  if (error) return <p>{error}</p>
+
+  if (loading) return <p>Loading...</p>
+
+  if (threads.length === 0) {
+    return <p>Board {slug} is empty</p>
   }
   return (
-    <div className="container">
-      {items.map((item) => (
-        <div key={item.id}>
-          <div>
-            <Link to={`/${slug}/${item.id}`}>
-              <strong>{item.subject}</strong>
+    <div>
+      {threads.map((thread) => (
+        <div key={thread.id}>
+            <Link to={`/${slug}/${thread.id}`}>
+              <strong>{thread.subject}</strong>
             </Link>
           </div>
-        </div>
       ))}
     </div>
   );
