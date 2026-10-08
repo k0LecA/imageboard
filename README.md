@@ -1,4 +1,7 @@
-# Imageboard
+ 
+# imageboard
+
+![blankch logo](./frontend/src/assets/blankch.svg)
 
 An imageboard project with a React frontend and an Express API backed by PostgreSQL. The project is under active development.
 
@@ -14,6 +17,6 @@ The frontend and backend are separate applications. Follow the setup instruction
 
 ## Stack
 
-- Frontend: React, TypeScript, Vite, React Router
-- Backend: Node.js, Express
-- Database: PostgreSQL, with pgAdmin available through Docker Compose
+- **Frontend:** React, TypeScript, Vite, React Router
+- **Backend:** Node.js, Express
+- **Database:** PostgreSQL, with pgAdmin available through Docker Compose
