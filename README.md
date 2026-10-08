@@ -1,7 +1,7 @@
  
 # imageboard
 
-![blankch logo](./frontend/src/assets/blankch.svg)
+![blankch logo](./frontend/src/assets/logo.svg)
 
 An imageboard project with a React frontend and an Express API backed by PostgreSQL. The project is under active development.
 
