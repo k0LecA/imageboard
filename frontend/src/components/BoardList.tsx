@@ -23,16 +23,29 @@ function BoardList() {
   }
 
   return (
-    <div>
-      {boards.map((board) => (
-        <div key={board.id}>
-          <Link to={`/${board.slug}`}>
-            <strong>{board.name}</strong>
-          </Link>
+    <div className="board-list">
+      {Object.entries(
+        boards.reduce<Record<string, Board[]>>((groups, board) => {
+          (groups[board.theme] ??= []).push(board);
+          return groups;
+        }, {})
+      ).map(([theme, groupedBoards]) => (
+        <div key={theme} className="board-group">
+          <h2>{theme}</h2>
+
+          <div className="board-group-items">
+            {groupedBoards?.map((board) => (
+              <div key={board.id}>
+                <Link to={`/${board.slug}`}>
+                  /{board.slug}/ - {board.name}
+                </Link>
+              </div>
+            ))}
+          </div>
         </div>
       ))}
     </div>
-  )
+  );
 }
 
 export default BoardList

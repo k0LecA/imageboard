@@ -112,3 +112,33 @@
   overflow-wrap: anywhere;
   white-space: pre-wrap;
 }
+.board-list {
+  max-width: 900px;
+  margin: 30px auto;
+}
+
+.board-group {
+  margin-bottom: 30px;
+}
+
+.board-group h2 {
+  font-size: 20px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+  text-transform: capitalize;
+}
+
+.board-group-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+}
+
+.board-group-items a {
+  color: var(--link-color);
+  text-decoration: none;
+}
+
+.board-group-items a:hover {
+  text-decoration: underline;
+}
