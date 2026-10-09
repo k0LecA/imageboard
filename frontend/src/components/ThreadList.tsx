@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from 'react-router-dom'
 import { getThreads } from "../services/ThreadService";
 import type { Thread } from "../types/Thread";
+import LastPosts from "./LastPosts";
 
 function ThreadList ({ slug }: { slug: string }) {
   const [threads, setThreads] = useState<Thread[]>([]);
@@ -23,13 +24,20 @@ function ThreadList ({ slug }: { slug: string }) {
     return <p>Board {slug} is empty</p>
   }
   return (
-    <div>
+    <div className="thread-list">
       {threads.map((thread) => (
-        <div key={thread.id}>
-            <Link to={`/${slug}/${thread.id}`}>
-              <strong>{thread.subject}</strong>
-            </Link>
+        <div className="thread" key={thread.id}>
+          <div className="thread-header">
+            <span>Anonymous</span>
+            <span>{new Date(thread.created_at).toLocaleString()}</span>
+            <span>№{thread.id}</span>
+            <Link to={`/${slug}/${thread.id}`}>Reply</Link>
           </div>
+
+          <strong className="thread-subject">{thread.subject}</strong>
+
+          <LastPosts slug={slug} threadId={thread.id} />
+        </div>
       ))}
     </div>
   );

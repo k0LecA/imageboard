@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Link } from 'react-router-dom'
+import { useState, useEffect } from "react";
+
 
 function PostList({
   threadId,
@@ -17,7 +17,7 @@ function PostList({
                   setItems(json);
                   setDataIsLoaded(true);
               });
-  }, []);
+  }, [slug,threadId]);
   if (!dataIsLoaded) {
           return (
               <div>
