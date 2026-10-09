@@ -67,3 +67,8 @@ CREATE TABLE sessions (
 );
 
 CREATE INDEX idx_sessions_moderator ON sessions (moderator_id);
+
+--2
+ALTER TABLE boards
+ADD COLUMN theme VARCHAR(50) NOT NULL DEFAULT 'default',
+ADD COLUMN banner_key VARCHAR(255);
