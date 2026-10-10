@@ -6,7 +6,7 @@ const getAllPostsByThread = async (req,res)=>{
     const results=await pool.query(`
       SELECT * FROM posts WHERE thread_id=$1 ORDER BY id ASC`,[threadId]);
     if(!results.rows[0]){
-      res.status(404).send("empty");
+      //res.status(404).send("empty");
     }
     res.status(200).json(results.rows);
   } catch(error) {
