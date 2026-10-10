@@ -12,7 +12,7 @@ const getThreadsByBoard = async (req,res) => {
       [slug]
     );
     if(!results.rows[0]){
-      return res.status(404).json(results.rows);
+      //return res.status(404).json(results.rows);
     }
     res.status(200).json(results.rows);
   } catch(error){
