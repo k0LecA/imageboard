@@ -4,6 +4,7 @@ import type { Board } from '../types/Board';
 import { getBoardMeta } from '../services/BoardService';
 import { useEffect, useState } from 'react';
 import NotFound from './NotFound';
+import CreateThread from '../components/CreateThread';
 
 function Board () {
   const { slug } = useParams();
@@ -26,6 +27,7 @@ function Board () {
     <>
       <div><Link to={'/'}>Home</Link></div>
       <div className='container'>Board /{slug}</div>
+      <CreateThread />
       <div>
         <ThreadList slug={slug!} />
       </div>
