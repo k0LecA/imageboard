@@ -5,6 +5,7 @@ import { getBoardMeta } from '../services/BoardService';
 import { useEffect, useState } from 'react';
 import NotFound from './NotFound';
 import CreateThread from '../components/CreateThread';
+import Sidebar from '../components/Sidebar';
 
 function Board () {
   const { slug } = useParams();
@@ -25,14 +26,16 @@ function Board () {
 
   return (
     <>
-      <div><Link to={'/'}>Home</Link></div>
-      <div className='container'>Board /{slug}</div>
+      <div><Link to="/">Home</Link></div>
+      <div className="container">Board /{slug}</div>
       <CreateThread />
-      <div>
+
+      <div className="board-content">
+        <Sidebar />
         <ThreadList slug={slug!} />
       </div>
     </>
-  )
+  );
 }
 
 export default Board;
