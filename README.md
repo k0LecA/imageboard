@@ -1,3 +1,7 @@
+> "We are not even close."
+>
+> — Romans building Rome, end of Day 1
+
  
 # imageboard
 
