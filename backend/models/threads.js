@@ -18,6 +18,18 @@ const getThreadById = async (id) => {
   return result.rows[0];
 };
 
+const getThreadsByBoardSlug = async (slug) => {
+  const results = await pool.query(
+    `SELECT threads.*
+     FROM threads
+     JOIN boards ON boards.id = threads.board_id
+     WHERE boards.slug = $1
+     ORDER BY threads.id ASC`,
+    [slug]
+  );
+  return results;
+}
+
 const getThreadsByBoardId = async (boardId) => {
   const result = await pool.query(
     `
@@ -65,6 +77,7 @@ const deleteThread = async (id) => {
 export {
   getThreads,
   getThreadById,
+  getThreadsByBoardSlug,
   getThreadsByBoardId,
   createThread,
   updateThread,

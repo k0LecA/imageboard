@@ -7,7 +7,7 @@ const register = async ({ username, password, role, board_id }) => {
     await ModeratorModel.createModerator(username, hashedPassword, role, board_id)
 }
 
-const authenticate = async (username, password) => {
+const authenticate = async ({ username, password }) => {
     const moderator = await ModeratorModel.getModeratorByUsername(username)
     if (!moderator) {
         throw new Error('Invalid username or password')

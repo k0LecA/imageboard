@@ -8,9 +8,9 @@ const router = express.Router({ mergeParams: true });
 
 
 router.get('/', getAllBoards);
-router.get('/:slug/meta', getBoardBySlug);
+router.get('/:slug', getBoardBySlug);
 router.post('/', authCheck, createBoard);
 router.use(ipHashMiddleware);
-router.use('/:slug', threadRoutes);
+router.use('/:slug/threads', threadRoutes);
 
 export default router;

@@ -1,16 +1,16 @@
 import pool from '../configs/dbConfig.js';
+import { getThreadById,getThreadsByBoardSlug } from '../models/threads.js';
+
+const getThread = async (req, res) => {
+  const id = req.params.threadId;
+  const result = await getThreadById(id)
+  res.status(200).json(result);
+}
 
 const getThreadsByBoard = async (req,res) => {
   const slug=req.params.slug;
   try{
-    const results = await pool.query(
-      `SELECT threads.*
-       FROM threads
-       JOIN boards ON boards.id = threads.board_id
-       WHERE boards.slug = $1
-       ORDER BY threads.id ASC`,
-      [slug]
-    );
+    const results = await getThreadsByBoardSlug(slug);
     if(!results.rows[0]){
       //return res.status(404).json(results.rows);
     }
@@ -68,4 +68,4 @@ const deleteThread = async (req, res) => {
   }
 }
 
-export { getThreadsByBoard, createThread, deleteThread } ;
+export { getThread,getThreadsByBoard, createThread, deleteThread } ;

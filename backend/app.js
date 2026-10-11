@@ -2,7 +2,6 @@ import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 import boardRoutes from './routes/boards.js'
-import threadRoutes from './routes/threads.js'
 import getThreadCount from './controllers/misc.js'
 import authRoutes from './routes/auth.js'
 
@@ -11,9 +10,9 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
 
-app.get('/threadCount', getThreadCount);
-app.use('/auth', authRoutes);
-app.use("/", boardRoutes);
+app.get('/api/thread-count', getThreadCount);
+app.use('/api/auth', authRoutes);
+app.use("/api/boards", boardRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
