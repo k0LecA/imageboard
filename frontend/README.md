@@ -16,7 +16,7 @@ npm install
 npm run dev
 ```
 
-Vite prints the local development URL when it starts. The frontend currently sends API requests to `http://localhost:8080`; make sure the backend is available at that address while developing. The backend's default port is `3000`, so adjust the frontend request URLs or backend configuration if they do not match.
+Vite prints the local development URL when it starts. The frontend currently sends API requests to `http://localhost:8080`, while the backend defaults to port `3000` and mounts its API under `/api`. To connect them, update the frontend request base URL (or configure a Vite proxy) to point to the running backend and use its `/api` routes.
 
 ## Routes
 
@@ -36,3 +36,7 @@ Vite prints the local development URL when it starts. The frontend currently sen
 | `npm run lint` | Run ESLint |
 
 The frontend source is in `src/`, with route pages in `src/pages/` and reusable lists in `src/components/`. API request URLs are currently written directly in those components.
+
+## Backend integration status
+
+The backend wraps successful JSON responses in `{ "data": ... }`; the current frontend services expect bare arrays or objects. The frontend URLs and response parsing therefore need to be updated to match the backend routes and response envelope before the two applications work together reliably. See the [backend API guide](../backend/README.md) for the route list.

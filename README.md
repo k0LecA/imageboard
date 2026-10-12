@@ -17,7 +17,7 @@ An imageboard project with a React frontend and an Express API backed by Postgre
 
 ## Run locally
 
-The frontend and backend are separate applications. Follow the setup instructions in each guide. The backend guide covers starting PostgreSQL, applying the database schema, and launching the API; the frontend guide covers starting the Vite development server.
+The frontend and backend are separate applications. Follow the setup instructions in each guide. The backend guide covers starting PostgreSQL, applying the database schema, and launching the API; the frontend guide covers starting the Vite development server. The backend defaults to port `3000` and serves API routes under `/api`; the frontend currently targets `localhost:8080`, so its API base URL or a Vite proxy must be configured to match before integration. Backend responses use a `{ data: ... }` envelope.
 
 ## Stack
 

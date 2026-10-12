@@ -11,8 +11,8 @@ This directory contains the database schema and its entity-relationship diagram 
 
 ## Schema overview
 
-The core content model is `boards` → `threads` → `posts`. Posts can reference another post through `parent_id`, and may have associated entries in `files`. Moderator accounts are stored in `moderators`, with login sessions in `sessions`.
+The core content model is `boards` → `threads` → `posts`. Boards include a theme and optional banner storage key. Posts can reference another post through `parent_id`, have an indexed generated search vector, and may have associated entries in `files`. Moderator accounts are stored in `moderators`, with UUID login sessions in `sessions`.
 
 Deleting a board cascades to its threads, posts, files, and board-scoped moderators. Deleting a thread cascades to its posts and files. Deleting a post sets `parent_id` to `NULL` on replies that referenced it.
 
-The schema also defines indexes for board thread ordering, post lookup by thread and IP hash, full-text search over messages, files by post, and sessions by moderator.
+The schema also defines indexes for board thread ordering, post lookup by thread and IP hash, full-text search over messages, files by post, and sessions by moderator. The `message_tsv` search vector is generated from each post's message using PostgreSQL's `simple` text configuration.

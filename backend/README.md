@@ -57,25 +57,26 @@ Use a long, random `HASH_SECRET`. Keep `.env` private. When the API runs directl
 
 ## API
 
-All request and response bodies use JSON except where noted. Routes that create threads or posts are public. Moderator-protected routes expect the session UUID returned by sign-in as the raw `Authorization` header value.
+The API is mounted at `/api`. JSON success responses use a `{ "data": ... }` envelope. Errors use `{ "error": "..." }`; unexpected errors return a generic message and are logged by the server. Empty collections return `200` with an empty array.
 
 | Method | Path | Purpose | Access |
 | --- | --- | --- | --- |
-| `GET` | `/` | List boards | Public |
-| `POST` | `/` | Create a board (`slug`, `name`, optional `bumpLimit`, `maxThreads`) | Moderator |
-| `GET` | `/:slug` | List threads on a board | Public |
-| `POST` | `/:slug` | Create a thread (`board_id`, `subject`, `message`) | Public |
-| `DELETE` | `/:slug/:threadId` | Delete a thread | Moderator |
-| `GET` | `/:slug/:threadId` | List posts in a thread | Public |
-| `POST` | `/:slug/:threadId` | Add a post (`threadId`, `board_id`, `message`) | Public |
-| `DELETE` | `/:slug/:threadId/:postId` | Delete a post | Moderator |
-| `POST` | `/auth/signup` | Create a moderator (`username`, `password`) | Public |
-| `POST` | `/auth/signin` | Sign in (`username`, `password`) | Public |
-| `GET` | `/threadCount` | Return the thread ID sequence's current value | Public |
+| `GET` | `/api/boards` | List boards | Public |
+| `POST` | `/api/boards` | Create a board (`slug`, `name`, optional `bumpLimit`, `maxThreads`) | Session required |
+| `GET` | `/api/boards/:slug` | Get board details | Public |
+| `GET` | `/api/boards/:slug/threads` | List threads on a board | Public |
+| `POST` | `/api/boards/:slug/threads` | Create a thread (`board_id`, `subject`, `message`) | Public |
+| `GET` | `/api/boards/:slug/threads/:threadId` | Get a thread | Public |
+| `DELETE` | `/api/boards/:slug/threads/:threadId` | Delete a thread | Session required |
+| `GET` | `/api/boards/:slug/threads/:threadId/posts` | List posts in a thread | Public |
+| `POST` | `/api/boards/:slug/threads/:threadId/posts` | Add a post (`threadId`, `boardId`, `message`) | Public |
+| `DELETE` | `/api/boards/:slug/threads/:threadId/posts/:postId` | Delete a post | Session required |
+| `POST` | `/api/auth/signin` | Sign in (`username`, `password`) | Public |
+| `GET` | `/api/thread-count` | Return the thread ID sequence's current value | Public |
 
-Sign-in returns a `sessionToken` UUID and an `expiresAt` timestamp. For example, send `Authorization: <sessionToken>` on protected requests. Sessions are created with a seven-day expiry, though the current authentication middleware checks that the session exists and does not enforce `expires_at`.
+Protected routes expect a session token in the raw `Authorization` header. Authentication is currently incomplete: the auth service calls moderator and session model methods that are not exported, so sign-in and protected requests may fail. There is no signup route in the current router. The middleware is intended to reject missing or expired sessions with `401`.
 
-Thread and post IDs are looked up/deleted by ID in their current handlers; route `slug` values are used to list threads but are not checked by the delete handlers. The `threadCount` endpoint reports the sequence value, which can include IDs of deleted threads.
+The route handlers currently use IDs from request bodies or paths without consistently checking that they belong to the board and thread named in the URL. Board-scoped moderator authorization and request validation are also not implemented. The thread count reports the sequence value, which can include IDs of deleted threads.
 
 ## Project layout
 
@@ -89,7 +90,8 @@ Thread and post IDs are looked up/deleted by ID in their current handlers; route
 
 ## Current limitations
 
-- There is no input validation, rate limiting, sign-out endpoint, or session expiry enforcement.
-- Passwords are currently hashed with SHA-256; this should be replaced with a password hashing algorithm designed for passwords before deployment.
-- File metadata tables exist, but upload and image serving are not implemented.
-- Board lookup by slug is not currently exposed as a dedicated route.
+- Request validation, rate limiting, and sign-out are not implemented.
+- Authentication is not fully wired to the current models, as described above.
+- Passwords are currently hashed with SHA-256; replace this with a password hashing algorithm designed for passwords before deployment.
+- File metadata tables and controller functions exist, but file routes, upload, and image serving are not implemented.
+- Thread and post creation does not yet enforce board limits, thread lock state, or thread bump updates.
