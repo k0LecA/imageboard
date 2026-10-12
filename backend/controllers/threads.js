@@ -1,71 +1,76 @@
-import pool from '../configs/dbConfig.js';
-import { getThreadById,getThreadsByBoardSlug } from '../models/threads.js';
+import pool from "../configs/dbConfig.js";
+import {
+  deleteThread as deleteThreadRecord,
+  getThreadById,
+  getThreadsByBoardSlug,
+} from "../models/threads.js";
 
 const getThread = async (req, res) => {
-  const id = req.params.threadId;
-  const result = await getThreadById(id)
-  res.status(200).json(result);
-}
-
-const getThreadsByBoard = async (req,res) => {
-  const slug=req.params.slug;
-  try{
-    const results = await getThreadsByBoardSlug(slug);
-    if(!results.rows[0]){
-      //return res.status(404).json(results.rows);
+  try {
+    const thread = await getThreadById(req.params.threadId);
+    if (!thread) {
+      return res.status(404).json({ error: "Thread not found" });
     }
-    res.status(200).json(results.rows);
-  } catch(error){
-    res.status(404).send(error);
+    return res.status(200).json(thread);
+  } catch (error) {
+    return res.status(500).send(error);
   }
-}
+};
 
-const createThread = async (req,res) => {
-  console.log("Cia");
-  const client=await pool.connect();
-  const data=req.body; //board_id subject message
+const getThreadsByBoard = async (req, res) => {
+  try {
+    const result = await getThreadsByBoardSlug(req.params.slug);
+    return res.status(200).json(result.rows);
+  } catch (error) {
+    return res.status(500).send(error);
+  }
+};
+
+const createThread = async (req, res) => {
+  const client = await pool.connect();
+  const { board_id: boardId, subject, message } = req.body;
 
   try {
-    await client.query('BEGIN');
+    await client.query("BEGIN");
 
-    const thread = await client.query(
-      `INSERT INTO threads(board_id, subject,is_pinned,is_locked)
-      VALUES ($1,$2,false,false)
-      RETURNING id`,
-      [data.board_id,data.subject]);
-
-    const threadId=thread.rows[0].id;
-    const authorIpHash = req.hashedIp;
+    const threadResult = await client.query(
+      `
+        INSERT INTO threads (board_id, subject, is_pinned, is_locked)
+        VALUES ($1, $2, false, false)
+        RETURNING id
+      `,
+      [boardId, subject],
+    );
+    const threadId = threadResult.rows[0].id;
 
     await client.query(
-      `INSERT INTO posts(thread_id,board_id,author_ip_hash,message)
-        VALUES ($1,$2,$3,$4)`,
-      [threadId,data.board_id,authorIpHash,data.message]);
+      `
+        INSERT INTO posts (thread_id, board_id, author_ip_hash, message)
+        VALUES ($1, $2, $3, $4)
+      `,
+      [threadId, boardId, req.hashedIp, message],
+    );
 
-    await client.query('COMMIT');
-
-    res.status(201).json({threadId});
-
-  } catch(error){
-    await client.query('ROLLBACK');
-    res.status(404).send("post error");
+    await client.query("COMMIT");
+    return res.status(201).json({ threadId });
+  } catch (error) {
+    await client.query("ROLLBACK");
+    return res.status(500).send(error);
   } finally {
     client.release();
   }
-}
+};
 
 const deleteThread = async (req, res) => {
-  const threadId = req.params.threadId;
-
   try {
-    const result = await pool.query(`DELETE FROM threads WHERE id=$1`, [threadId]);
-    if(!result.rowCount) {
+    const thread = await deleteThreadRecord(req.params.threadId);
+    if (!thread) {
       return res.status(404).send("Thread not found");
     }
-    res.status(200).send("Thread deleted");
+    return res.status(200).send("Thread deleted");
   } catch (error) {
-    res.status(500).send(error);
+    return res.status(500).send(error);
   }
-}
+};
 
-export { getThread,getThreadsByBoard, createThread, deleteThread } ;
+export { getThread, getThreadsByBoard, createThread, deleteThread };

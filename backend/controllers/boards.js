@@ -1,49 +1,49 @@
-import * as boardModel from '../models/boards.js'
+import * as boardModel from "../models/boards.js";
 
 const getAllBoards = async (req, res) => {
   try {
-    const results = await boardModel.getBoards()
-    if (results.length === 0) {
-      return res.status(404).json({ error: 'Not Found' })
+    const boards = await boardModel.getBoards();
+    if (boards.length === 0) {
+      return res.status(404).json({ error: "Not Found" });
     }
-    res.status(200).json(results)
+    return res.status(200).json(boards);
   } catch (error) {
-    res.status(500).json({ error: 'Internal' })
-    console.log(`Error listing all boards ${error}`)
+    console.log(`Error listing all boards ${error}`);
+    return res.status(500).json({ error: "Internal" });
   }
-}
+};
 
 const getBoardBySlug = async (req, res) => {
-  const slug = req.params.slug
   try {
-    const result = await boardModel.getBoardBySlug(slug)
-    if (!result) {
-      return res.status(404).json({ error: 'Not Found' })
+    const board = await boardModel.getBoardBySlug(req.params.slug);
+    if (!board) {
+      return res.status(404).json({ error: "Not Found" });
     }
-    res.status(200).json(result)
+    return res.status(200).json(board);
   } catch (error) {
-    console.log(`Error getting board by slug ${error}`)
-    res.status(500).json({ error: 'Internal' })
+    console.log(`Error getting board by slug ${error}`);
+    return res.status(500).json({ error: "Internal" });
   }
-}
+};
 
 const createBoard = async (req, res) => {
-  const { slug, name, bumpLimit, maxThreads } = req.body
+  const { slug, name, bumpLimit, maxThreads } = req.body;
+
   try {
-    const result = await boardModel.createBoard({
+    const board = await boardModel.createBoard({
       slug,
       name,
       bumpLimit,
       maxThreads,
-    })
-    if (!result) {
-      res.status(400).json({ error: 'Error creating' })
+    });
+    if (!board) {
+      return res.status(400).json({ error: "Error creating" });
     }
-    res.status(201).json(result)
+    return res.status(201).json(board);
   } catch (error) {
-    console.log(`Error creating board ${error}`)
-    res.status(500).json({ error: 'Internal Server Error' })
+    console.log(`Error creating board ${error}`);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
-}
+};
 
-export { getAllBoards, getBoardBySlug, createBoard }
+export { getAllBoards, getBoardBySlug, createBoard };
