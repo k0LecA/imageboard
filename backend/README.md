@@ -72,7 +72,7 @@ The API is mounted at `/api`. JSON success responses use a `{ "data": ... }` env
 | `POST` | `/api/boards/:slug/threads/:threadId/posts` | Add a post (`threadId`, `boardId`, `message`) | Public |
 | `DELETE` | `/api/boards/:slug/threads/:threadId/posts/:postId` | Delete a post | Session required |
 | `POST` | `/api/auth/signin` | Sign in (`username`, `password`) | Public |
-| `GET` | `/api/thread-count` | Return the thread ID sequence's current value | Public |
+| `GET` | `/api/misc/thread-count` | Return the thread ID sequence's current value | Public |
 
 Protected routes expect a session token in the raw `Authorization` header. Authentication is currently incomplete: the auth service calls moderator and session model methods that are not exported, so sign-in and protected requests may fail. There is no signup route in the current router. The middleware is intended to reject missing or expired sessions with `401`.
 
