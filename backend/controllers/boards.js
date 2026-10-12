@@ -1,32 +1,28 @@
 import * as boardModel from "../models/boards.js";
+import createHttpError from "../utils/httpError.js";
 
-const getAllBoards = async (req, res) => {
+const getAllBoards = async (req, res, next) => {
   try {
     const boards = await boardModel.getBoards();
-    if (boards.length === 0) {
-      return res.status(404).json({ error: "Not Found" });
-    }
-    return res.status(200).json(boards);
+    return res.status(200).json({ data: boards });
   } catch (error) {
-    console.log(`Error listing all boards ${error}`);
-    return res.status(500).json({ error: "Internal" });
+    return next(error);
   }
 };
 
-const getBoardBySlug = async (req, res) => {
+const getBoardBySlug = async (req, res, next) => {
   try {
     const board = await boardModel.getBoardBySlug(req.params.slug);
     if (!board) {
-      return res.status(404).json({ error: "Not Found" });
+      return next(createHttpError(404, "Board not found"));
     }
-    return res.status(200).json(board);
+    return res.status(200).json({ data: board });
   } catch (error) {
-    console.log(`Error getting board by slug ${error}`);
-    return res.status(500).json({ error: "Internal" });
+    return next(error);
   }
 };
 
-const createBoard = async (req, res) => {
+const createBoard = async (req, res, next) => {
   const { slug, name, bumpLimit, maxThreads } = req.body;
 
   try {
@@ -37,12 +33,11 @@ const createBoard = async (req, res) => {
       maxThreads,
     });
     if (!board) {
-      return res.status(400).json({ error: "Error creating" });
+      return next(createHttpError(400, "Could not create board"));
     }
-    return res.status(201).json(board);
+    return res.status(201).json({ data: board });
   } catch (error) {
-    console.log(`Error creating board ${error}`);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return next(error);
   }
 };
 

@@ -3,17 +3,18 @@ import {
   deletePost as deletePostRecord,
   getPostsByThreadId,
 } from "../models/posts.js";
+import createHttpError from "../utils/httpError.js";
 
-const getAllPostsByThread = async (req, res) => {
+const getAllPostsByThread = async (req, res, next) => {
   try {
     const posts = await getPostsByThreadId(req.params.threadId);
-    return res.status(200).json(posts);
+    return res.status(200).json({ data: posts });
   } catch (error) {
-    return res.status(500).send(error);
+    return next(error);
   }
 };
 
-const createPost = async (req, res) => {
+const createPost = async (req, res, next) => {
   const { threadId, boardId, message } = req.body;
 
   try {
@@ -23,21 +24,21 @@ const createPost = async (req, res) => {
       authorIpHash: req.hashedIp,
       message,
     });
-    return res.status(201).json(post);
+    return res.status(201).json({ data: post });
   } catch (error) {
-    return res.status(500).send(error);
+    return next(error);
   }
 };
 
-const deletePost = async (req, res) => {
+const deletePost = async (req, res, next) => {
   try {
     const post = await deletePostRecord(req.params.postId);
     if (!post) {
-      return res.status(404).send("Post not found");
+      return next(createHttpError(404, "Post not found"));
     }
-    return res.status(200).send("Post deleted");
+    return res.status(200).json({ data: { message: "Post deleted" } });
   } catch (error) {
-    return res.status(500).send(error);
+    return next(error);
   }
 };
 

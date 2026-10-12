@@ -1,11 +1,11 @@
 import getLastThreadId from '../models/misc.js';
 
-const getThreadCount = async (req, res) => {
+const getThreadCount = async (req, res, next) => {
   try {
     const threadCount = await getLastThreadId();
-    return res.status(200).json(threadCount);
+    return res.status(200).json({ data: threadCount });
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return next(error);
   }
 };
 

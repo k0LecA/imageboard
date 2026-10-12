@@ -1,19 +1,16 @@
 import * as fileModel from "../models/files.js";
+import createHttpError from "../utils/httpError.js";
 
-const getFilesByPost = async (req, res) => {
+const getFilesByPost = async (req, res, next) => {
   try {
     const files = await fileModel.getFilesByPostId(req.params.postId);
-    if (files.length === 0) {
-      return res.status(404).json({ error: "Not Found" });
-    }
-    return res.status(200).json(files);
+    return res.status(200).json({ data: files });
   } catch (error) {
-    console.log(`Error getting files by post ${error}`);
-    return res.status(500).json({ error: "Internal" });
+    return next(error);
   }
 };
 
-const createFile = async (req, res) => {
+const createFile = async (req, res, next) => {
   const { postId, s3Key, originalName, size, mimeType } = req.body;
 
   try {
@@ -25,12 +22,11 @@ const createFile = async (req, res) => {
       mimeType,
     });
     if (!file) {
-      return res.status(400).json({ error: "Error creating" });
+      return next(createHttpError(400, "Could not create file"));
     }
-    return res.status(201).json(file);
+    return res.status(201).json({ data: file });
   } catch (error) {
-    console.log(`Error creating file ${error}`);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return next(error);
   }
 };
 

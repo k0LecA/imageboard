@@ -1,19 +1,23 @@
 import { validateSession } from '../services/authService.js'
+import createHttpError from '../utils/httpError.js';
 
 const authCheck = async (req, res, next) => {
     const token = req.headers.authorization;
     if (!token) {
-        return res.status(401).json({ message: 'No token provided' });
+        return res.status(401).json({ error: 'No token provided' });
     }
 
     try {
         const session = await validateSession(token)
-        if (!session) {
-            return res.status(401).json({ message: 'Invalid token' });
+        if (!session || new Date(session.expires_at) <= new Date()) {
+            return res.status(401).json({ error: 'Invalid or expired session' });
         }
-        next();
+        return next();
     } catch (error) {
-        return res.status(500).json({ message: 'Failed to authenticate token' });
+        if (error.message === 'Invalid session') {
+            return next(createHttpError(401, 'Invalid or expired session'));
+        }
+        return next(error);
     }
 };
 

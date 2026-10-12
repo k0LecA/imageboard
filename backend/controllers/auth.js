@@ -1,25 +1,30 @@
 import { authenticate, register } from "../services/authService.js";
+import createHttpError from "../utils/httpError.js";
 
-const signUp = async (req, res) => {
+const signUp = async (req, res, next) => {
   const { username, password, role, boardId } = req.body;
-  const result = await register({ username, password, role, boardId });
 
-  if (!result.ok) {
-    return res.status(500).json(result);
+  try {
+    await register({ username, password, role, boardId });
+    return res.status(201).json({ data: { created: true } });
+  } catch (error) {
+    return next(error);
   }
-
-  return res.status(200).json(result);
 };
 
-const signIn = async (req, res) => {
+const signIn = async (req, res, next) => {
   const { username, password } = req.body;
-  const result = await authenticate({ username, password });
 
-  if (!result.ok) {
-    return res.status(500).json(result);
+  try {
+    const moderator = await authenticate({ username, password });
+    const { id, role, board_id: boardId } = moderator;
+    return res.status(200).json({ data: { id, username, role, boardId } });
+  } catch (error) {
+    if (error.message === "Invalid username or password") {
+      return next(createHttpError(401, error.message));
+    }
+    return next(error);
   }
-
-  return res.status(200).json(result);
 };
 
 export { signUp, signIn };

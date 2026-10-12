@@ -4,29 +4,30 @@ import {
   getThreadById,
   getThreadsByBoardSlug,
 } from "../models/threads.js";
+import createHttpError from "../utils/httpError.js";
 
-const getThread = async (req, res) => {
+const getThread = async (req, res, next) => {
   try {
     const thread = await getThreadById(req.params.threadId);
     if (!thread) {
-      return res.status(404).json({ error: "Thread not found" });
+      return next(createHttpError(404, "Thread not found"));
     }
-    return res.status(200).json(thread);
+    return res.status(200).json({ data: thread });
   } catch (error) {
-    return res.status(500).send(error);
+    return next(error);
   }
 };
 
-const getThreadsByBoard = async (req, res) => {
+const getThreadsByBoard = async (req, res, next) => {
   try {
     const result = await getThreadsByBoardSlug(req.params.slug);
-    return res.status(200).json(result.rows);
+    return res.status(200).json({ data: result.rows });
   } catch (error) {
-    return res.status(500).send(error);
+    return next(error);
   }
 };
 
-const createThread = async (req, res) => {
+const createThread = async (req, res, next) => {
   const client = await pool.connect();
   const { board_id: boardId, subject, message } = req.body;
 
@@ -52,24 +53,28 @@ const createThread = async (req, res) => {
     );
 
     await client.query("COMMIT");
-    return res.status(201).json({ threadId });
+    return res.status(201).json({ data: { threadId } });
   } catch (error) {
-    await client.query("ROLLBACK");
-    return res.status(500).send(error);
+    try {
+      await client.query("ROLLBACK");
+    } catch (rollbackError) {
+      console.error(rollbackError);
+    }
+    return next(error);
   } finally {
     client.release();
   }
 };
 
-const deleteThread = async (req, res) => {
+const deleteThread = async (req, res, next) => {
   try {
     const thread = await deleteThreadRecord(req.params.threadId);
     if (!thread) {
-      return res.status(404).send("Thread not found");
+      return next(createHttpError(404, "Thread not found"));
     }
-    return res.status(200).send("Thread deleted");
+    return res.status(200).json({ data: { message: "Thread deleted" } });
   } catch (error) {
-    return res.status(500).send(error);
+    return next(error);
   }
 };
 
