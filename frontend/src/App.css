@@ -112,6 +112,25 @@
   overflow-wrap: anywhere;
   white-space: pre-wrap;
 }
+
+.post-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.post-image-link {
+  display: block;
+  max-width: 100%;
+}
+
+.post-image {
+  display: block;
+  max-width: min(100%, 400px);
+  max-height: 400px;
+  object-fit: contain;
+}
 .board-list {
   max-width: 900px;
   margin: 30px auto;

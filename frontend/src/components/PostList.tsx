@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getLastPosts } from "../services/PostService";
 import type { Post } from "../types/Post";
+import PostImages from "./PostImages";
 
 
 function PostList({
@@ -31,6 +32,7 @@ function PostList({
           <div>
               <strong>{item.message}</strong>
           </div>
+          <PostImages files={item.files ?? []} />
         </div>
       ))}
     </div>

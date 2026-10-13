@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Post } from "../types/Post";
 import { getLastPosts } from "../services/PostService";
+import PostImages from "./PostImages";
 
 
 function LastPosts({ slug,threadId }: { slug:string,threadId: number }) {
@@ -32,6 +33,7 @@ function LastPosts({ slug,threadId }: { slug:string,threadId: number }) {
           <div className="last-post" key={post.id}>
             <small>Anonymous {new Date(post.created_at).toLocaleString()}</small>
             <p>{post.message}</p>
+            <PostImages files={post.files ?? []} />
           </div>
         ))}
     </div>
