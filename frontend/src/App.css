@@ -116,8 +116,9 @@
 .post-images {
   display: flex;
   flex-wrap: wrap;
+  flex: 0 0 auto;
   gap: 10px;
-  margin-top: 10px;
+  max-width: 250px;
 }
 
 .post-image-link {
@@ -127,9 +128,24 @@
 
 .post-image {
   display: block;
-  max-width: min(100%, 400px);
-  max-height: 400px;
+  max-width: min(100%, 240px);
+  max-height: 240px;
   object-fit: contain;
+}
+
+.post-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.post-message {
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.post-content p {
+  min-width: 0;
 }
 .board-list {
   max-width: 900px;

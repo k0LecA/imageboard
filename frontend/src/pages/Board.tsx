@@ -13,7 +13,14 @@ function Board () {
   const [board, setBoard] = useState<Board>()
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [threadListVersion, setThreadListVersion] = useState(0);
   useEffect(() => {
+    if (!slug) {
+      setError("Board not found");
+      setLoading(false);
+      return;
+    }
+
     getBoardMeta(slug)
       .then(setBoard)
       .catch(()=> setError("Server is unreachable"))
@@ -27,12 +34,12 @@ function Board () {
   return (
     <>
       <div><Link to="/">Home</Link></div>
-      <div className="container">Board /{slug}</div>
-      <CreateThread />
+      <div className="container">Board /{board.slug}</div>
+      <CreateThread slug={board.slug} boardId={board.id} onCreated={() => setThreadListVersion((version) => version + 1)} />
 
       <div className="board-content">
         <Sidebar />
-        <ThreadList slug={slug!} />
+        <ThreadList slug={board.slug} refreshVersion={threadListVersion} />
       </div>
     </>
   );

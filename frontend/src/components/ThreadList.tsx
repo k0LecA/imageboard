@@ -4,7 +4,7 @@ import { getThreads } from "../services/ThreadService";
 import type { Thread } from "../types/Thread";
 import LastPosts from "./LastPosts";
 
-function ThreadList ({ slug }: { slug: string }) {
+function ThreadList ({ slug, refreshVersion = 0 }: { slug: string; refreshVersion?: number }) {
   const [threads, setThreads] = useState<Thread[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null)
@@ -14,7 +14,7 @@ function ThreadList ({ slug }: { slug: string }) {
       .then(setThreads)
       .catch(()=> setError("Server is unreachable"))
       .finally(()=>setLoading(false))
-  }, [slug]);
+  }, [slug, refreshVersion]);
 
   if (error) return <p>{error}</p>
 

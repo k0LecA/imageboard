@@ -32,8 +32,10 @@ function LastPosts({ slug,threadId }: { slug:string,threadId: number }) {
         .map((post) => (
           <div className="last-post" key={post.id}>
             <small>Anonymous {new Date(post.created_at).toLocaleString()}</small>
-            <p>{post.message}</p>
-            <PostImages files={post.files ?? []} />
+            <div className="post-content">
+              <PostImages files={post.files ?? []} />
+              <p>{post.message}</p>
+            </div>
           </div>
         ))}
     </div>

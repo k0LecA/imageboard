@@ -5,6 +5,8 @@ import {
   getThreadsByBoardSlug,
 } from "../models/threads.js";
 import createHttpError from "../utils/httpError.js";
+import { uploadFile as storeFile, deleteFile as deleteStoredFile } from "../services/storage.js";
+import { createFile } from "../models/files.js";
 
 const getThread = async (req, res, next) => {
   try {
@@ -30,8 +32,13 @@ const getThreadsByBoard = async (req, res, next) => {
 const createThread = async (req, res, next) => {
   const client = await pool.connect();
   const { board_id: boardId, subject, message } = req.body;
+  const uploadedFiles = [];
 
   try {
+    for (const file of req.files ?? []) {
+      uploadedFiles.push(await storeFile(file));
+    }
+
     await client.query("BEGIN");
 
     const threadResult = await client.query(
@@ -44,13 +51,17 @@ const createThread = async (req, res, next) => {
     );
     const threadId = threadResult.rows[0].id;
 
-    await client.query(
+    const postResult = await client.query(
       `
         INSERT INTO posts (thread_id, board_id, author_ip_hash, message)
         VALUES ($1, $2, $3, $4)
+        RETURNING id
       `,
       [threadId, boardId, req.hashedIp, message],
     );
+    for (const file of uploadedFiles) {
+      await createFile({ postId: postResult.rows[0].id, ...file, db: client });
+    }
 
     await client.query("COMMIT");
     return res.status(201).json({ data: { threadId } });
@@ -60,6 +71,9 @@ const createThread = async (req, res, next) => {
     } catch (rollbackError) {
       console.error(rollbackError);
     }
+    await Promise.all(uploadedFiles.map((file) => deleteStoredFile(file.s3Key).catch((cleanupError) => {
+      console.error("Failed to remove uploaded file after thread creation failed:", cleanupError);
+    })));
     return next(error);
   } finally {
     client.release();

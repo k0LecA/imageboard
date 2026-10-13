@@ -29,10 +29,10 @@ function PostList({
     <div className="container">
       {items.map((item) => (
         <div key={item.id}>
-          <div>
-              <strong>{item.message}</strong>
+          <div className="post-content">
+            <PostImages files={item.files ?? []} />
+            <strong className="post-message">{item.message}</strong>
           </div>
-          <PostImages files={item.files ?? []} />
         </div>
       ))}
     </div>
