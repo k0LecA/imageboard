@@ -1,6 +1,6 @@
 # Imageboard frontend
 
-React and TypeScript single-page frontend built with Vite. It currently provides pages for the board list, an individual board, and a thread.
+React and TypeScript single-page frontend built with Vite. It provides a home page with board links, board pages with thread lists, and thread pages with posts and replies.
 
 ## Requirements
 
@@ -16,15 +16,21 @@ npm install
 npm run dev
 ```
 
-Vite prints the local development URL when it starts. The frontend currently sends API requests to `http://localhost:8080`, while the backend defaults to port `3000` and mounts its API under `/api`. To connect them, update the frontend request base URL (or configure a Vite proxy) to point to the running backend and use its `/api` routes.
+Vite prints the local development URL when it starts. Frontend services currently use `http://localhost:8080/api/boards`; configure the backend to listen on port `8080` (for example, with `PORT=8080`) or update the API base URL in `src/services/`.
 
 ## Routes
 
 | Path | Page |
 | --- | --- |
 | `/` | Home page with the board list |
-| `/:slug` | Board page with its thread list |
-| `/:slug/:threadId` | Thread page with its posts |
+| `/:slug` | Board page with breadcrumb navigation, sidebar, thread list, and create-thread form |
+| `/:slug/:threadId` | Thread page with breadcrumb navigation, sidebar, posts, and reply form |
+
+## Posting
+
+Creating a thread sends `board_id`, `subject`, and `message` as multipart form data. Up to four images are sent using the `files` field. A reply sends `boardId` and `message`, with an optional image in the `file` field. The backend stores images in MinIO and associates them with the post.
+
+Post and thread IDs are returned inside the backend's `{ "data": ... }` response envelope. Image display uses `/api/files/:fileId`.
 
 ## Scripts
 
@@ -35,8 +41,4 @@ Vite prints the local development URL when it starts. The frontend currently sen
 | `npm run preview` | Preview the production build locally |
 | `npm run lint` | Run ESLint |
 
-The frontend source is in `src/`, with route pages in `src/pages/` and reusable lists in `src/components/`. API request URLs are currently written directly in those components.
-
-## Backend integration status
-
-The backend wraps successful JSON responses in `{ "data": ... }`; the current frontend services expect bare arrays or objects. The frontend URLs and response parsing therefore need to be updated to match the backend routes and response envelope before the two applications work together reliably. See the [backend API guide](../backend/README.md) for the route list.
+The frontend source is in `src/`, route pages in `src/pages/`, reusable components in `src/components/`, and API services in `src/services/`.

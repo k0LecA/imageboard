@@ -1,9 +1,9 @@
 # Project documentation
 
-This directory contains the database schema and its entity-relationship diagram for the imageboard backend.
+This directory contains the PostgreSQL schema and its entity-relationship diagram for the imageboard backend.
 
-- [`db.sql`](./db.sql) defines the PostgreSQL tables, relationships, defaults, and indexes. Apply it to an empty database when setting up the backend; Docker Compose starts PostgreSQL but does not load this schema automatically. See the [backend setup guide](../backend/README.md) for the full setup steps.
-- [`er.png`](./er.png) provides a visual overview of the database entities and their relationships.
+- [`db.sql`](./db.sql) defines the tables, relationships, defaults, and indexes. Apply it to an empty database during setup; Docker Compose starts PostgreSQL but does not load this schema automatically. See the [backend setup guide](../backend/README.md).
+- [`er.png`](./er.png) shows the database entities and their relationships.
 
 ## Entity-relationship diagram
 
@@ -11,8 +11,8 @@ This directory contains the database schema and its entity-relationship diagram 
 
 ## Schema overview
 
-The core content model is `boards` → `threads` → `posts`. Boards include a theme and optional banner storage key. Posts can reference another post through `parent_id`, have an indexed generated search vector, and may have associated entries in `files`. Moderator accounts are stored in `moderators`, with UUID login sessions in `sessions`.
+The content model is `boards` → `threads` → `posts`. Each post belongs to a board and thread, and may reference a parent post. Posts have a generated full-text search vector and can have associated file records. Moderators may be associated with a board; UUID sessions belong to moderators.
 
 Deleting a board cascades to its threads, posts, files, and board-scoped moderators. Deleting a thread cascades to its posts and files. Deleting a post sets `parent_id` to `NULL` on replies that referenced it.
 
-The schema also defines indexes for board thread ordering, post lookup by thread and IP hash, full-text search over messages, files by post, and sessions by moderator. The `message_tsv` search vector is generated from each post's message using PostgreSQL's `simple` text configuration.
+Indexes support thread ordering by board, post lookup by thread and IP hash, full-text search over messages, file lookup by post, and session lookup by moderator. `message_tsv` is generated from each post's message using PostgreSQL's `simple` text configuration.
