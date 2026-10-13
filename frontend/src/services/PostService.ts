@@ -29,8 +29,8 @@ export async function createPost(
     body: formData,
   })
   if (!response.ok) {
-    const body = await response.json().catch(() => null) as { message?: string } | null
-    throw new Error(body?.message ?? 'Could not post reply')
+    const body = await response.json().catch(() => null) as { message?: string; error?: string } | null
+    throw new Error(body?.message ?? body?.error ?? 'Could not post reply')
   }
 
   const body = await response.json() as ApiResponse<Post>

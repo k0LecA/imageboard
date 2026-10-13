@@ -16,7 +16,8 @@ const getAllPostsByThread = async (req, res, next) => {
 };
 
 const createPost = async (req, res, next) => {
-  const { threadId, boardId, message } = req.body;
+  const { boardId, message } = req.body;
+  const { threadId } = req.params;
   let uploadedFile;
 
   try {
