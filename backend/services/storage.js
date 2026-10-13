@@ -28,4 +28,9 @@ async function deleteFile(s3Key) {
   await minioClient.removeObject(bucketName, s3Key);
 }
 
-export { uploadFile, deleteFile };
+async function getFile(s3Key) {
+  const bucketName = process.env.MINIO_BUCKET_NAME || "imageboard";
+  return minioClient.getObject(bucketName, s3Key);
+}
+
+export { uploadFile, deleteFile, getFile };

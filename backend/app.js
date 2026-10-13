@@ -4,6 +4,7 @@ import cors from 'cors';
 import boardRoutes from './routes/boards.js'
 import authRoutes from './routes/auth.js'
 import miscRoutes from './routes/misc.js'
+import fileRoutes from './routes/files.js'
 import errorHandler from './middleware/errorHandler.js';
 
 const app = express();
@@ -12,6 +13,7 @@ app.use(express.json());
 app.use(morgan('dev'));
 app.use('/api/misc', miscRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/files', fileRoutes);
 app.use("/api/boards", boardRoutes);
 
 app.use(errorHandler);

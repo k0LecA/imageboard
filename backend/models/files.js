@@ -24,6 +24,18 @@ const getFilesByPostId = async (postId) => {
   return rows;
 };
 
+const getFileById = async (fileId) => {
+  const { rows } = await pool.query(
+    `
+      SELECT *
+      FROM files
+      WHERE id = $1
+    `,
+    [fileId],
+  );
+  return rows[0];
+};
+
 const deleteFile = async (fileId) => {
   const { rows } = await pool.query(
     `
@@ -36,4 +48,4 @@ const deleteFile = async (fileId) => {
   return rows[0];
 };
 
-export { createFile, getFilesByPostId, deleteFile };
+export { createFile, getFilesByPostId, getFileById, deleteFile };
