@@ -1,18 +1,23 @@
 {
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
   "dependencies": {
-    "dotenv": "^18.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.5",
     "express": "^5.2.1",
     "minio": "^8.0.7",
     "morgan": "^1.12.1",
     "multer": "^2.4.0",
-    "pg": "^8.23.0"
-  },
-  "type": "module",
-  "devDependencies": {
-    "cors": "^2.8.6"
-  },
-  "scripts": {
-    "dev": "node --watch server.js",
-    "test": "node --test"
+    "pg": "^8.23.1"
   }
 }
