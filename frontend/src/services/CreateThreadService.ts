@@ -21,9 +21,10 @@ export async function createThread(
     throw new Error(body?.message ?? 'Could not create thread')
   }
 
-  const body = await response.json() as { data?: { threadId?: number } }
-  if (typeof body.data?.threadId !== 'number') {
+  const body = await response.json() as { data?: { threadId?: number | string } }
+  const threadId = Number(body.data?.threadId)
+  if (!Number.isSafeInteger(threadId) || threadId <= 0) {
     throw new Error('The server returned an invalid thread response')
   }
-  return body.data.threadId
+  return threadId
 }
