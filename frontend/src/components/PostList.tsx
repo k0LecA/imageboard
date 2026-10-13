@@ -22,18 +22,24 @@ function PostList({
       .catch(() => setError("Failed to load posts"))
       .finally(() => setLoading(false));
   }, [slug,threadId]);
-  if (loading) return <p>Loading posts...</p>;
-  if (error) return <p>{error}</p>;
+  if (loading) return <p className="thread-post-state">Loading posts...</p>;
+  if (error) return <p className="thread-post-state" role="alert">{error}</p>;
+  if (items.length === 0) return <p className="thread-post-state">No posts in this thread yet.</p>;
 
   return (
-    <div className="container">
-      {items.map((item) => (
-        <div key={item.id}>
+    <div className="thread-posts">
+      {items.map((item, index) => (
+        <article className={`thread-post${index === 0 ? " thread-post-op" : ""}`} key={item.id}>
+          <header className="thread-post-header">
+            <strong>{index === 0 ? "Original post" : "Anonymous"}</strong>
+            <time dateTime={item.created_at}>{new Date(item.created_at).toLocaleString()}</time>
+            <span>№{item.id}</span>
+          </header>
           <div className="post-content">
             <PostImages files={item.files ?? []} />
-            <strong className="post-message">{item.message}</strong>
+            <p className="post-message">{item.message}</p>
           </div>
-        </div>
+        </article>
       ))}
     </div>
   );
