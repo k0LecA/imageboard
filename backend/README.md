@@ -31,8 +31,8 @@ Run these commands from the `backend` directory.
 4. Install dependencies and run the API:
 
    ```sh
-   npm install
-   npm run dev
+   pnpm install
+   pnpm dev
    ```
 
 The API initializes the MinIO bucket on startup. Start pgAdmin as well with `docker compose up -d` if you want the database UI.
@@ -58,6 +58,16 @@ The API initializes the MinIO bucket on startup. Start pgAdmin as well with `doc
 pgAdmin settings, the MinIO console port, and Docker bind addresses are configured in the root `.env`.
 
 Use long, random values for `HASH_SECRET` and MinIO credentials. Keep `.env` private. When the API runs inside a container on the Compose network, use the MinIO service name `minio` as its hostname; the included Compose file currently starts infrastructure services, not the API container.
+
+## Tests
+
+Run unit tests from the `backend` directory:
+
+```sh
+pnpm test
+```
+
+Tests use the built-in Node.js test runner. The error handler tests do not require environment files, PostgreSQL, or MinIO.
 
 ## API
 

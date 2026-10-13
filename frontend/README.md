@@ -12,8 +12,8 @@ React and TypeScript single-page frontend built with Vite. It provides a home pa
 From the `frontend` directory:
 
 ```sh
-npm install
-npm run dev
+pnpm install
+pnpm dev
 ```
 
 Vite prints the local development URL when it starts. Frontend services currently use `http://localhost:8080/api/boards`; configure the backend to listen on port `8080` (for example, with `PORT=8080`) or update the API base URL in `src/services/`.
@@ -36,9 +36,9 @@ Post and thread IDs are returned inside the backend's `{ "data": ... }` response
 
 | Command | Description |
 | --- | --- |
-| `npm run dev` | Start the Vite development server |
-| `npm run build` | Type-check and create a production build in `dist/` |
-| `npm run preview` | Preview the production build locally |
-| `npm run lint` | Run ESLint |
+| `pnpm dev` | Start the Vite development server |
+| `pnpm build` | Type-check and create a production build in `dist/` |
+| `pnpm preview` | Preview the production build locally |
+| `pnpm lint` | Run ESLint |
 
 The frontend source is in `src/`, route pages in `src/pages/`, reusable components in `src/components/`, and API services in `src/services/`.
