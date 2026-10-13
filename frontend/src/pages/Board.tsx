@@ -33,7 +33,11 @@ function Board () {
 
   return (
     <>
-      <div><Link to="/">Home</Link></div>
+      <nav className="thread-breadcrumbs board-breadcrumbs" aria-label="Breadcrumb">
+        <Link to="/">Home</Link>
+        <span>/</span>
+        <span>/{board.slug}/</span>
+      </nav>
       <div className="container">Board /{board.slug}</div>
       <CreateThread slug={board.slug} boardId={board.id} onCreated={() => setThreadListVersion((version) => version + 1)} />
 

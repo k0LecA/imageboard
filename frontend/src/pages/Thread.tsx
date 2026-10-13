@@ -2,10 +2,13 @@ import { Link, useParams } from 'react-router-dom'
 import PostList from '../components/PostList'
 import Sidebar from '../components/Sidebar'
 import NotFound from './NotFound'
+import CreateReply from '../components/CreateReply'
+import { useState } from 'react'
 
 function Thread () {
   const { slug, threadId: threadIdParam } = useParams();
   const threadId = Number(threadIdParam);
+  const [postListVersion, setPostListVersion] = useState(0);
 
   if (!slug || !Number.isSafeInteger(threadId) || threadId <= 0) {
     return <NotFound />;
@@ -26,10 +29,12 @@ function Thread () {
         <Link to={`/${slug}`} className="thread-back-link">← Back to /{slug}/</Link>
       </header>
 
+      <CreateReply slug={slug} threadId={threadId} onCreated={() => setPostListVersion((version) => version + 1)} />
+
       <div className="board-content thread-page-content">
         <Sidebar />
         <main className="thread-post-list">
-          <PostList slug={slug} threadId={threadId} />
+          <PostList slug={slug} threadId={threadId} refreshVersion={postListVersion} />
         </main>
       </div>
     </div>

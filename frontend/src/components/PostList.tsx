@@ -7,9 +7,11 @@ import PostImages from "./PostImages";
 function PostList({
   threadId,
   slug,
+  refreshVersion = 0,
 }: {
   threadId: number;
   slug: string;
+  refreshVersion?: number;
 }) {
   const [items, setItems] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
@@ -21,7 +23,7 @@ function PostList({
       .then(setItems)
       .catch(() => setError("Failed to load posts"))
       .finally(() => setLoading(false));
-  }, [slug,threadId]);
+  }, [slug,threadId,refreshVersion]);
   if (loading) return <p className="thread-post-state">Loading posts...</p>;
   if (error) return <p className="thread-post-state" role="alert">{error}</p>;
   if (items.length === 0) return <p className="thread-post-state">No posts in this thread yet.</p>;

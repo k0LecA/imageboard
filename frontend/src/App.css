@@ -397,6 +397,11 @@
   opacity: 0.75;
 }
 
+.board-breadcrumbs {
+  box-sizing: border-box;
+  padding: 18px 24px 0;
+}
+
 .thread-page-header {
   display: flex;
   justify-content: space-between;
@@ -420,6 +425,16 @@
 .thread-page-content {
   max-width: 1100px;
   margin: 0 auto;
+}
+
+.createReply {
+  max-width: 700px;
+  margin: 20px auto 28px;
+}
+
+.reply-submit-row {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .thread-post-list {
