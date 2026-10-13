@@ -1,7 +1,7 @@
 import pool from "../configs/dbConfig.js";
 
-const createFile = async ({ postId, s3Key, originalName, size, mimeType }) => {
-  const { rows } = await pool.query(
+const createFile = async ({ postId, s3Key, originalName, size, mimeType, db = pool }) => {
+  const { rows } = await db.query(
     `
       INSERT INTO files (post_id, s3_key, original_name, size, mime_type)
       VALUES ($1, $2, $3, $4, $5)

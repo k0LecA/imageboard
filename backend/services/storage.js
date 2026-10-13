@@ -1,8 +1,11 @@
+import { randomUUID } from "node:crypto";
+import { basename } from "node:path";
 import minioClient from "../configs/minioConfig.js";
 
 async function uploadFile(file) {
   const bucketName = process.env.MINIO_BUCKET_NAME || "imageboard";
-  const name = `${Date.now()}-${file.originalname}`;
+  const originalName = basename(file.originalname.replaceAll("\\", "/"));
+  const name = `${randomUUID()}-${originalName}`;
 
   await minioClient.putObject(
     bucketName,
@@ -12,7 +15,17 @@ async function uploadFile(file) {
     { "Content-Type": file.mimetype }
   );
 
-  return name;
+  return {
+    s3Key: name,
+    originalName,
+    size: file.size,
+    mimeType: file.mimetype,
+  };
 }
 
-export default uploadFile;
+async function deleteFile(s3Key) {
+  const bucketName = process.env.MINIO_BUCKET_NAME || "imageboard";
+  await minioClient.removeObject(bucketName, s3Key);
+}
+
+export { uploadFile, deleteFile };

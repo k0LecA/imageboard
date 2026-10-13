@@ -1,4 +1,5 @@
 import pool from "../configs/dbConfig.js";
+import { createFile } from "./files.js";
 
 const getPosts = async () => {
   const { rows } = await pool.query("SELECT * FROM posts");
@@ -34,16 +35,45 @@ const getPostsByThreadId = async (threadId) => {
   return posts.map((p) => ({ ...p, files: filesByPost.get(p.id) ?? [] }));
 };
 
-const createPost = async ({ threadId, boardId, authorIpHash, message }) => {
-  const { rows } = await pool.query(
-    `
-      INSERT INTO posts (thread_id, board_id, author_ip_hash, message)
-      VALUES ($1, $2, $3, $4)
-      RETURNING *
-    `,
-    [threadId, boardId, authorIpHash, message],
-  );
-  return rows[0];
+const createPost = async ({ threadId, boardId, authorIpHash, message, file }) => {
+  const client = await pool.connect();
+
+  try {
+    await client.query("BEGIN");
+
+    const { rows } = await client.query(
+      `
+        INSERT INTO posts (thread_id, board_id, author_ip_hash, message)
+        VALUES ($1, $2, $3, $4)
+        RETURNING *
+      `,
+      [threadId, boardId, authorIpHash, message],
+    );
+    const post = rows[0];
+
+    if (file) {
+      const savedFile = await createFile({
+        postId: post.id,
+        ...file,
+        db: client,
+      });
+      post.files = [savedFile];
+    } else {
+      post.files = [];
+    }
+
+    await client.query("COMMIT");
+    return post;
+  } catch (error) {
+    try {
+      await client.query("ROLLBACK");
+    } catch (rollbackError) {
+      console.error("Failed to roll back post creation:", rollbackError);
+    }
+    throw error;
+  } finally {
+    client.release();
+  }
 };
 
 const updatePost = async ({ id, message }) => {
