@@ -104,3 +104,4 @@ The route handlers do not consistently verify that IDs belong to the board or th
 - Authentication is not fully wired to the current models, as described above.
 - Passwords are hashed with SHA-256; use a password hashing algorithm designed for passwords before deployment.
 - Thread and post creation does not enforce board limits, thread lock state, or thread bump updates.
+- The schema includes board banner metadata, ordered board rules, reports, bans, and moderation audit actions. Their upload, management, and moderation API workflows are not implemented yet.
