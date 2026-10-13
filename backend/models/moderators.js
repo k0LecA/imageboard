@@ -1,13 +1,20 @@
 import pool from "../configs/dbConfig.js";
 
 const createModerator = async ({ username, passwordHash, role, boardId }) => {
+  const columns = ["username", "password_hash", "board_id"];
+  const values = [username, passwordHash, boardId ?? null];
+
+  if (role !== undefined) {
+    columns.push("role");
+    values.push(role);
+  }
+
+  const placeholders = values.map((_, index) => `$${index + 1}`);
   const { rows } = await pool.query(
-    `
-      INSERT INTO moderators (username, password_hash, role, board_id)
-      VALUES ($1, $2, $3, $4)
-      RETURNING id
-    `,
-    [username, passwordHash, role, boardId],
+    `INSERT INTO moderators (${columns.join(", ")})
+     VALUES (${placeholders.join(", ")})
+     RETURNING id`,
+    values,
   );
   return rows[0];
 };

@@ -30,13 +30,24 @@ const getBoardById = async (id) => {
 };
 
 const createBoard = async ({ slug, name, bumpLimit, maxThreads }) => {
+  const columns = ["slug", "name"];
+  const values = [slug, name];
+
+  if (bumpLimit !== undefined) {
+    columns.push("bump_limit");
+    values.push(bumpLimit);
+  }
+  if (maxThreads !== undefined) {
+    columns.push("max_threads");
+    values.push(maxThreads);
+  }
+
+  const placeholders = values.map((_, index) => `$${index + 1}`);
   const { rows } = await pool.query(
-    `
-      INSERT INTO boards (slug, name, bump_limit, max_threads)
-      VALUES ($1, $2, $3, $4)
-      RETURNING *
-    `,
-    [slug, name, bumpLimit, maxThreads],
+    `INSERT INTO boards (${columns.join(", ")})
+     VALUES (${placeholders.join(", ")})
+     RETURNING *`,
+    values,
   );
   return rows[0];
 };

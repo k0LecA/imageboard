@@ -43,13 +43,24 @@ const getThreadsByBoardId = async (boardId) => {
 };
 
 const createThread = async ({ boardId, isPinned, isLocked }) => {
+  const columns = ["board_id"];
+  const values = [boardId];
+
+  if (isPinned !== undefined) {
+    columns.push("is_pinned");
+    values.push(isPinned);
+  }
+  if (isLocked !== undefined) {
+    columns.push("is_locked");
+    values.push(isLocked);
+  }
+
+  const placeholders = values.map((_, index) => `$${index + 1}`);
   const { rows } = await pool.query(
-    `
-      INSERT INTO threads (board_id, is_pinned, is_locked)
-      VALUES ($1, $2, $3)
-      RETURNING id
-    `,
-    [boardId, isPinned, isLocked],
+    `INSERT INTO threads (${columns.join(", ")})
+     VALUES (${placeholders.join(", ")})
+     RETURNING id`,
+    values,
   );
   return rows[0];
 };
