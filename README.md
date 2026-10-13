@@ -16,6 +16,15 @@ An imageboard project with a React and TypeScript frontend and an Express API ba
 
 ## Run locally
 
+Prepare the environment files from the repository root:
+
+```sh
+cp .env.example .env
+cp backend/.env.example backend/.env
+```
+
+The root `.env` configures Docker Compose; `backend/.env` configures the API. Database and MinIO credentials must match across the files. The backend template sets `PORT=8080` to match the frontend.
+
 The frontend and backend run as separate applications. Start PostgreSQL and MinIO with Docker Compose, apply [`docs/db.sql`](./docs/db.sql), then start the backend and frontend using their guides. The backend defaults to port `3000`; the frontend currently calls `http://localhost:8080/api`, so set `PORT=8080` for the backend when running the frontend with the current service URLs.
 
 Successful API responses use a `{ "data": ... }` envelope. Error responses use `{ "error": "..." }`.

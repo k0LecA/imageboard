@@ -11,7 +11,7 @@ Express API for boards, threads, posts, moderator accounts, and sessions. Postgr
 
 Run these commands from the `backend` directory.
 
-1. Copy `.env.example` to `.env` and fill in the database, pgAdmin, and `HASH_SECRET` values. Also set the MinIO values listed below. Set `PORT=8080` to match the frontend's current API URL; the API otherwise defaults to port `3000`.
+1. Copy `../.env.example` to `../.env` for Docker Compose and `.env.example` to `.env` for the API. Database and MinIO credentials must match across the files. The backend template sets `PORT=8080` to match the frontend's current API URL.
 2. Start PostgreSQL and MinIO:
 
    ```sh
@@ -37,7 +37,7 @@ Run these commands from the `backend` directory.
 
 The API initializes the MinIO bucket on startup. Start pgAdmin as well with `docker compose up -d` if you want the database UI.
 
-### Environment variables
+### Backend environment variables
 
 | Variable | Purpose |
 | --- | --- |
@@ -45,20 +45,17 @@ The API initializes the MinIO bucket on startup. Start pgAdmin as well with `doc
 | `POSTGRES_USER` | PostgreSQL user |
 | `POSTGRES_PASSWORD` | PostgreSQL password |
 | `POSTGRES_DB` | Database name |
-| `DB_HOST` | Host-side database bind address and API database hostname |
+| `DB_HOST` | Database hostname accessible from the API |
 | `DB_PORT` | Host-side PostgreSQL port |
 | `HASH_SECRET` | Secret used to HMAC-hash poster IP addresses |
-| `PGADMIN_HOST` | Host-side pgAdmin bind address |
-| `PGADMIN_PORT` | Host-side pgAdmin port |
-| `PGADMIN_DEFAULT_EMAIL` | pgAdmin login email |
-| `PGADMIN_DEFAULT_PASSWORD` | pgAdmin login password |
-| `MINIO_HOST` | MinIO host and Compose bind address; use `localhost` when API runs on the host |
+| `MINIO_HOST` | MinIO hostname accessible from the API |
 | `MINIO_API_PORT` | MinIO API port (normally `9000`) |
-| `MINIO_CONSOLE_PORT` | MinIO console port (normally `9001`) |
 | `MINIO_ROOT_USER` | MinIO access key |
 | `MINIO_ROOT_PASSWORD` | MinIO secret key |
 | `MINIO_BUCKET_NAME` | Image bucket (defaults to `imageboard`) |
 | `STORAGE_USE_SSL` | Use TLS for MinIO (`true` or `false`) |
+
+pgAdmin settings, the MinIO console port, and Docker bind addresses are configured in the root `.env`.
 
 Use long, random values for `HASH_SECRET` and MinIO credentials. Keep `.env` private. When the API runs inside a container on the Compose network, use the MinIO service name `minio` as its hostname; the included Compose file currently starts infrastructure services, not the API container.
 
