@@ -32,6 +32,26 @@ services:
     volumes:
       - ./pgadmin-data:/var/lib/pgadmin
 
+  minio:
+    image: minio/minio:latest
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    ports:
+      - "${MINIO_HOST}:${MINIO_API_PORT}:9000"
+      - "${MINIO_HOST}:${MINIO_CONSOLE_PORT}:9001"
+    env_file:
+      - .env
+    networks:
+      - postgres-network
+    volumes:
+      - ./minio-data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
 networks:
   postgres-network:
     driver: bridge
