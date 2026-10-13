@@ -6,7 +6,7 @@ const getPosts = async () => {
 };
 
 const getPostsByThreadId = async (threadId) => {
-  const { rows } = await pool.query(
+  const { rows: posts } = await pool.query(
     `
       SELECT *
       FROM posts
@@ -14,7 +14,24 @@ const getPostsByThreadId = async (threadId) => {
     `,
     [threadId],
   );
-  return rows;
+
+  if (posts.length === 0) return [];
+
+  const { rows: files } = await pool.query(
+    `
+      SELECT * FROM files WHERE post_id = ANY($1)
+    `,
+    [posts.map((p) => p.id)]
+  );
+
+  const filesByPost = new Map();
+  for (const f of files) {
+    if (!filesByPost.has(f.post_id)) filesByPost.set(f.post_id, []);
+    filesByPost.get(f.post_id).push(f);
+  }
+
+
+  return posts.map((p) => ({ ...p, files: filesByPost.get(p.id) ?? [] }));
 };
 
 const createPost = async ({ threadId, boardId, authorIpHash, message }) => {
