@@ -56,3 +56,5 @@ dist-ssr
 *.sw?
 
 minio-data/
+
+AGENTS.md
