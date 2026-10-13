@@ -1,6 +1,7 @@
 import type { Board } from '../types/Board'
 
 const API_URL = 'http://localhost:8080/api/boards'
+type ApiResponse<T> = { data: T }
 
 export async function getBoards(): Promise<Board[]> {
   const response = await fetch(API_URL)
@@ -8,8 +9,8 @@ export async function getBoards(): Promise<Board[]> {
   if (!response.ok) {
     throw new Error('Failed to fetch boards')
   }
-  const data: Board[] = await response.json()
-  return data
+  const body: ApiResponse<Board[]> = await response.json()
+  return body.data
 }
 
 export async function getBoardMeta(slug: string): Promise<Board> {
@@ -18,6 +19,6 @@ export async function getBoardMeta(slug: string): Promise<Board> {
   if (!response.ok) {
     throw new Error('Failed to fetch board meta')
   }
-  const data: Board = await response.json()
-  return data;
+  const body: ApiResponse<Board> = await response.json()
+  return body.data
 }
