@@ -71,6 +71,7 @@ The API is mounted at `/api`. JSON success responses use a `{ "data": ... }` env
 | `GET` | `/api/boards/:slug/threads/:threadId/posts` | List posts in a thread | Public |
 | `POST` | `/api/boards/:slug/threads/:threadId/posts` | Add a post (`threadId`, `boardId`, `message`) | Public |
 | `DELETE` | `/api/boards/:slug/threads/:threadId/posts/:postId` | Delete a post | Session required |
+| `GET` | `/api/files/:fileId` | Display an uploaded image | Public |
 | `POST` | `/api/auth/signin` | Sign in (`username`, `password`) | Public |
 | `GET` | `/api/misc/thread-count` | Return the thread ID sequence's current value | Public |
 
@@ -93,5 +94,5 @@ The route handlers currently use IDs from request bodies or paths without consis
 - Request validation, rate limiting, and sign-out are not implemented.
 - Authentication is not fully wired to the current models, as described above.
 - Passwords are currently hashed with SHA-256; replace this with a password hashing algorithm designed for passwords before deployment.
-- File metadata tables and controller functions exist, but file routes, upload, and image serving are not implemented.
+- Image uploads are stored in MinIO and served through `/api/files/:fileId`. Only JPEG, PNG, GIF, WebP, and AVIF files are displayed.
 - Thread and post creation does not yet enforce board limits, thread lock state, or thread bump updates.
