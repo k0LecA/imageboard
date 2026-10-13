@@ -2,6 +2,7 @@
   "dependencies": {
     "dotenv": "^18.0.3",
     "express": "^5.2.1",
+    "minio": "^8.0.7",
     "morgan": "^1.12.1",
     "pg": "^8.23.0"
   },

@@ -1,13 +1,17 @@
 import 'dotenv/config';
 import app from './app.js';
+import initMinio from './configs/initMinio.js';
 
 const port = process.env.PORT || 3000;
 
-app.listen(port, (error) =>{
-    if(!error)
-        console.log("Server is Successfully Running, "
-            + "and App is listening on port "+ port)
-    else
-        console.log("Error occurred, server can't start", error);
-    }
-);
+try {
+    await initMinio();
+    console.log('MinIO initialized successfully.');
+
+    app.listen(port, () => {
+        console.log(`Server running on port ${port}`);
+    });
+} catch (error) {
+    console.error('Failed to initialize MinIO:', error);
+    process.exit(1);
+}
