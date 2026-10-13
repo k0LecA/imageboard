@@ -1,9 +1,9 @@
 import type { Post } from '../types/Post'
 
-const API_URL = 'http://localhost:8080'
+const API_URL = 'http://localhost:8080/api/boards'
 
 export async function getLastPosts(slug: string,threadId:number): Promise<Post[]> {
-  const response = await fetch(`${API_URL}/${slug}/${threadId}`)
+  const response = await fetch(`${API_URL}/${slug}/threads/${threadId}/posts`)
 
   if (!response.ok) {
     throw new Error('Failed to fetch boards')
