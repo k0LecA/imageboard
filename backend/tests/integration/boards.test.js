@@ -1,16 +1,29 @@
-import { test, after } from "node:test";
-import assert from "node:assert/strict";
+import { test, expect, afterAll } from "vitest";
 import { randomUUID } from "node:crypto";
 
 import pool from "../../configs/dbConfig.js";
 import {
   createBoard,
+  getBoards,
   getBoardBySlug,
   deleteBoard,
-} from "../../repositories/boardRepository.js";
+} from "../../models/boards.js";
 
-test("createBoard создает доску в БД", async () => {
-  const slug = `test-${randomUUID()}`;
+test("createBoard creates a board in the database", async () => {
+  expect(process.env.POSTGRES_DB).toBe("app_test");
+  expect(process.env.DB_HOST).toBe("127.0.0.1");
+  expect(process.env.DB_PORT).toBe("5433");
+
+  const slug = `test-${randomUUID().replaceAll("-", "").slice(0, 11)}`;
+
+  // Проверяем подключение к тестовой базе
+  const { rows: databaseRows } = await pool.query(
+    "SELECT current_database() AS database",
+  );
+
+  expect(databaseRows[0].database).toBe("app_test");
+
+  let created = false;
 
   try {
     const board = await createBoard({
@@ -18,19 +31,27 @@ test("createBoard создает доску в БД", async () => {
       name: "Test Board",
     });
 
-    assert.ok(board.id);
-    assert.equal(board.slug, slug);
-    assert.equal(board.name, "Test Board");
+    created = true;
+
+    expect(board.id).toBeDefined();
+    expect(board.slug).toBe(slug);
+    expect(board.name).toBe("Test Board");
 
     const savedBoard = await getBoardBySlug(slug);
 
-    assert.ok(savedBoard);
-    assert.equal(savedBoard.id, board.id);
+    expect(savedBoard).toBeDefined();
+    expect(savedBoard.id).toBe(board.id);
+
+    const boards = await getBoards();
+
+    expect(boards.some(({ id }) => id === board.id)).toBe(true);
   } finally {
-    await deleteBoard(slug);
+    if (created) {
+      await deleteBoard(slug);
+    }
   }
 });
 
-after(async () => {
+afterAll(async () => {
   await pool.end();
 });
