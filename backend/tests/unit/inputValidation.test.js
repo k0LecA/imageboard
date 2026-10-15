@@ -7,7 +7,7 @@ import {
   validatePostInput,
   validateImageFile,
   validateReportTarget,
-} from '../utils/inputValidation.js';
+} from '../../utils/inputValidation.js';
 
 test('parses strict positive IDs without losing BIGINT precision', () => {
   assert.equal(parsePositiveId('1'), 1n);

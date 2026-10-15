@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createAuthCheck } from '../middleware/authCheck.js';
+import { createAuthCheck } from '../../middleware/authCheck.js';
 
 const TOKEN = 'f47ac10b-58cc-4372-a567-0e02b2c3d479';
 

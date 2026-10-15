@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createStorageService } from '../services/storage.js';
+import { createStorageService } from '../../services/storage.js';
 
 function createFakeClient() {
   return {
