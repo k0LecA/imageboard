@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node --test",
+    "test:unit": "node --env-file=.env.test --test tests/unit/*.test.js",
+    "test:integration": "node --env-file=.env.test --test tests/integration/*.test.js",
     "dev": "node --watch server.js"
   },
   "keywords": [],
