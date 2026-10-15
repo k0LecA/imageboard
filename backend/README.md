@@ -61,13 +61,25 @@ Use long, random values for `HASH_SECRET` and MinIO credentials. Keep `.env` pri
 
 ## Tests
 
-Run unit tests from the `backend` directory:
+Tests use Vitest and run from the `backend` directory:
 
 ```sh
 pnpm test
 ```
 
-Tests use the built-in Node.js test runner. The error handler tests do not require environment files, PostgreSQL, or MinIO.
+The Vitest configuration loads `backend/.env.test` before the PostgreSQL pool is imported and runs the unit and integration projects without file parallelism. `.env.test` is ignored by Git; it must configure the isolated test database as `app_test` on `127.0.0.1:5433`.
+
+Start the test database from the repository root, then run the suite:
+
+```sh
+docker compose up -d database-test
+cd backend
+pnpm test
+```
+
+`database-test` uses PostgreSQL 18, the schema in `db/001-initial-schema.sql`, and temporary container storage. It does not mount `db-data`. The schema script runs only when PostgreSQL initializes its data directory; this service's temporary storage is recreated with the container. Do not change the test environment to point at the development database.
+
+Current coverage is limited: `tests/integration/boards.test.js` makes real PostgreSQL queries and checks the expected database name before creating a uniquely named board, then deletes it. `tests/integration/threads.test.js` is currently a mocked model test and does not connect to PostgreSQL. `tests/unit/threads.test.js` tests the controller with a mocked model. The integration suite does not yet exercise the other models or cover the full set of CRUD and constraint cases.
 
 ## API
 
