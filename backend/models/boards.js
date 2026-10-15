@@ -29,7 +29,7 @@ const getBoardById = async (id) => {
   return rows[0];
 };
 
-const createBoard = async ({ slug, name, bumpLimit, maxThreads }) => {
+const createBoard = async ({ slug, name, bumpLimit, maxThreads, theme }) => {
   const columns = ["slug", "name"];
   const values = [slug, name];
 
@@ -40,6 +40,10 @@ const createBoard = async ({ slug, name, bumpLimit, maxThreads }) => {
   if (maxThreads !== undefined) {
     columns.push("max_threads");
     values.push(maxThreads);
+  }
+  if (theme !== undefined) {
+    columns.push("theme");
+    values.push(theme);
   }
 
   const placeholders = values.map((_, index) => `$${index + 1}`);
@@ -52,15 +56,31 @@ const createBoard = async ({ slug, name, bumpLimit, maxThreads }) => {
   return rows[0];
 };
 
-const updateBoardBySlug = async ({ slug, name, bumpLimit, maxThreads }) => {
+const updateBoardBySlug = async ({ slug, name, bumpLimit, maxThreads, theme }) => {
+  const updates = [];
+  const values = [slug];
+  const fields = [
+    ["name", name],
+    ["bump_limit", bumpLimit],
+    ["max_threads", maxThreads],
+    ["theme", theme],
+  ];
+
+  for (const [column, value] of fields) {
+    if (value !== undefined) {
+      values.push(value);
+      updates.push(`${column} = $${values.length}`);
+    }
+  }
+
+  if (updates.length === 0) return getBoardBySlug(slug);
+
   const { rows } = await pool.query(
-    `
-      UPDATE boards
-      SET name = $2, bump_limit = $3, max_threads = $4
-      WHERE slug = $1
-      RETURNING *
-    `,
-    [slug, name, bumpLimit, maxThreads],
+    `UPDATE boards
+     SET ${updates.join(", ")}
+     WHERE slug = $1
+     RETURNING *`,
+    values,
   );
   return rows[0];
 };

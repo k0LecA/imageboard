@@ -24,4 +24,20 @@ const deleteSession = async (sessionId) => {
   return rows[0];
 };
 
-export { createSession, deleteSession };
+const getSessionById = async (sessionId) => {
+  const { rows } = await pool.query(
+    `SELECT * FROM sessions WHERE id = $1`,
+    [sessionId],
+  );
+  return rows[0];
+};
+
+const deleteExpiredSessions = async (now = new Date()) => {
+  const { rows } = await pool.query(
+    `DELETE FROM sessions WHERE expires_at <= $1 RETURNING *`,
+    [now],
+  );
+  return rows;
+};
+
+export { createSession, getSessionById, deleteSession, deleteExpiredSessions };

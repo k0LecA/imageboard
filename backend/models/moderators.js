@@ -43,6 +43,14 @@ const getModeratorByCredentials = async ({ username, passwordHash }) => {
   return rows[0];
 };
 
+const getModeratorByUsername = async (username) => {
+  const { rows } = await pool.query(
+    `SELECT * FROM moderators WHERE username = $1`,
+    [username],
+  );
+  return rows[0];
+};
+
 const getModeratorById = async (id) => {
   const { rows } = await pool.query(
     `
@@ -87,6 +95,7 @@ export {
   createModerator,
   getModeratorsByBoard,
   getModeratorByCredentials,
+  getModeratorByUsername,
   getModeratorById,
   updateModerator,
   deleteModerator,

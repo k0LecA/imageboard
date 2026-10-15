@@ -42,10 +42,14 @@ const getThreadsByBoardId = async (boardId) => {
   return rows;
 };
 
-const createThread = async ({ boardId, isPinned, isLocked }) => {
+const createThread = async ({ boardId, subject, isPinned, isLocked }) => {
   const columns = ["board_id"];
   const values = [boardId];
 
+  if (subject !== undefined) {
+    columns.push("subject");
+    values.push(subject);
+  }
   if (isPinned !== undefined) {
     columns.push("is_pinned");
     values.push(isPinned);
@@ -65,15 +69,38 @@ const createThread = async ({ boardId, isPinned, isLocked }) => {
   return rows[0];
 };
 
-const updateThread = async ({ id, isPinned, isLocked }) => {
+const updateThread = async ({ id, subject, isPinned, isLocked }) => {
+  const updates = [];
+  const values = [id];
+  const fields = [
+    ["subject", subject],
+    ["is_pinned", isPinned],
+    ["is_locked", isLocked],
+  ];
+
+  for (const [column, value] of fields) {
+    if (value !== undefined) {
+      values.push(value);
+      updates.push(`${column} = $${values.length}`);
+    }
+  }
+
+  if (updates.length === 0) return getThreadById(id);
+
   const { rows } = await pool.query(
-    `
-      UPDATE threads
-      SET is_pinned = $2, is_locked = $3
-      WHERE id = $1
-      RETURNING *
-    `,
-    [id, isPinned, isLocked],
+    `UPDATE threads
+     SET ${updates.join(", ")}
+     WHERE id = $1
+     RETURNING *`,
+    values,
+  );
+  return rows[0];
+};
+
+const bumpThread = async (id) => {
+  const { rows } = await pool.query(
+    `UPDATE threads SET bumped_at = now() WHERE id = $1 RETURNING *`,
+    [id],
   );
   return rows[0];
 };
@@ -97,5 +124,6 @@ export {
   getThreadsByBoardId,
   createThread,
   updateThread,
+  bumpThread,
   deleteThread,
 };
