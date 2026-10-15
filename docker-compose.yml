@@ -24,7 +24,7 @@ services:
     ports:
       - "${DB_TEST_HOST:-127.0.0.1}:${DB_TEST_PORT:-5433}:5432"
     env_file:
-      - .env
+      - .env.test
     environment:
       POSTGRES_DB: ${POSTGRES_TEST_DB:-app_test}
     networks:
