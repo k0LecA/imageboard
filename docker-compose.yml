@@ -18,6 +18,28 @@ services:
       retries: 10
       start_period: 10s
 
+  database-test:
+    image: postgres:18.0
+    restart: unless-stopped
+    ports:
+      - "${DB_TEST_HOST:-127.0.0.1}:${DB_TEST_PORT:-5433}:5432"
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_TEST_DB:-app_test}
+    networks:
+      - postgres-network
+    tmpfs:
+      - /var/lib/postgresql
+    volumes:
+      - ./db/001-initial-schema.sql:/docker-entrypoint-initdb.d/001-initial-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
   pgadmin:
     image: dpage/pgadmin4
     restart: unless-stopped
