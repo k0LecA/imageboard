@@ -16,7 +16,7 @@ const authenticate = async ({ username, password }) => {
     if (!isMatch) {
         throw new Error('Invalid username or password')
     }
-    return { moderatorId: moderator.id, role: moderator.role, boardId: moderator.board_id }
+    return { id: moderator.id, username: moderator.username, role: moderator.role, board_id: moderator.board_id }
 }
 const createSession = async (moderatorId) => {
     const expires_at = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
