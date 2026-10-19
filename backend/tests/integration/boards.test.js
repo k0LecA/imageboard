@@ -16,7 +16,6 @@ test("createBoard creates a board in the database", async () => {
 
   const slug = `test-${randomUUID().replaceAll("-", "").slice(0, 11)}`;
 
-  // Проверяем подключение к тестовой базе
   const { rows: databaseRows } = await pool.query(
     "SELECT current_database() AS database",
   );
