@@ -1,4 +1,4 @@
-import { pool } from "../db/pool.js";
+import pool from "../configs/dbConfig.js";
 import {  register } from "../services/authService.js";
 import { getModeratorByUsername } from "../models/moderators.js";
 import dotenv from "dotenv";
