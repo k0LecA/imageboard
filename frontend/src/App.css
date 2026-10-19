@@ -147,6 +147,94 @@
 .post-content p {
   min-width: 0;
 }
+
+.mod-auth-page {
+  min-height: 100vh;
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  padding: 32px 20px;
+}
+
+.mod-auth-card {
+  width: min(100%, 400px);
+  box-sizing: border-box;
+  padding: 32px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--bg-color) 94%, white);
+  box-shadow: 0 18px 60px rgb(0 0 0 / 22%);
+}
+
+.mod-auth-back {
+  display: inline-block;
+  margin-bottom: 32px;
+  color: var(--link-color);
+  font-size: 14px;
+}
+
+.mod-auth-eyebrow {
+  margin: 0 0 8px;
+  color: var(--link-color);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.mod-auth-card h1 {
+  margin: 0;
+  font-size: 30px;
+}
+
+.mod-auth-description {
+  margin: 10px 0 26px;
+  color: color-mix(in srgb, var(--text-color) 68%, transparent);
+  line-height: 1.5;
+}
+
+.mod-auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mod-auth-form label {
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.mod-auth-form input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 7px;
+  outline: none;
+  background: var(--bg-color);
+  color: var(--text-color);
+}
+
+.mod-auth-form input:focus {
+  border-color: var(--link-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--link-color) 20%, transparent);
+}
+
+.mod-auth-form button {
+  margin-top: 14px;
+  padding: 12px 16px;
+  border: 0;
+  border-radius: 7px;
+  background: var(--link-color);
+  color: #181818;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mod-auth-form button:hover {
+  filter: brightness(1.08);
+}
 .board-list {
   max-width: 900px;
   margin: 30px auto;
