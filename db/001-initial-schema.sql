@@ -92,6 +92,7 @@ CREATE INDEX idx_moderators_board_id ON moderators (board_id);
 
 CREATE TABLE sessions (
     id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    token_hash   BYTEA NOT NULL UNIQUE,
     moderator_id BIGINT NOT NULL REFERENCES moderators(id) ON DELETE CASCADE,
     expires_at   TIMESTAMPTZ NOT NULL,
     created_at   TIMESTAMPTZ NOT NULL DEFAULT now()
