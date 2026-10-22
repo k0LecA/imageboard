@@ -33,13 +33,19 @@ const signIn = async (req, res, next) => {
 
     const token = await createSession(id);
 
+    res.cookie('session', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    });
+
     return res.status(200).json({
       data: {
         id,
         username: moderatorUsername,
         role,
-        boardId,
-        token
+        boardId
       }
     });
   } catch (error) {
@@ -56,6 +62,12 @@ const signOut = async (req, res, next) => {
     const { token } = req.auth;
 
     await deleteSession({ token });
+
+    res.clearCookie('session', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax'
+    });
 
     return res.status(200).json({
       data: { signedOut: true }
