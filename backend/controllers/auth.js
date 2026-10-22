@@ -1,31 +1,68 @@
-import { authenticate, register } from "../services/authService.js";
-import createHttpError from "../utils/httpError.js";
 
-const signUp = async (req, res, next) => {
-  const { username, password, role, boardId } = req.body;
+import {
+  authenticate,
+  createSession,
+  deleteSession
+} from '../services/authService.js';
 
-  try {
-    await register({ username, password, role, boardId });
-    return res.status(201).json({ data: { created: true } });
-  } catch (error) {
-    return next(error);
-  }
-};
+import createHttpError from '../utils/httpError.js';
 
 const signIn = async (req, res, next) => {
-  const { username, password } = req.body;
+  const { username, password } = req.body ?? {};
+
+  if (
+    typeof username !== 'string' ||
+    !username.trim() ||
+    typeof password !== 'string' ||
+    !password
+  ) {
+    return next(
+      createHttpError(400, 'Invalid username or password')
+    );
+  }
 
   try {
     const moderator = await authenticate({ username, password });
-    const { id, role, board_id: boardId } = moderator;
-    const session = await createSession(id);
-    return res.status(200).json({ data: { id, username, role, boardId, sessionId: session.id } });
+
+    const {
+      id,
+      username: moderatorUsername,
+      role,
+      board_id: boardId
+    } = moderator;
+
+    const token = await createSession(id);
+
+    return res.status(200).json({
+      data: {
+        id,
+        username: moderatorUsername,
+        role,
+        boardId,
+        token
+      }
+    });
   } catch (error) {
-    if (error.message === "Invalid username or password") {
+    if (error.message === 'Invalid username or password') {
       return next(createHttpError(401, error.message));
     }
+
     return next(error);
   }
 };
 
-export { signUp, signIn };
+const signOut = async (req, res, next) => {
+  try {
+    const { token } = req.auth;
+
+    await deleteSession({ token });
+
+    return res.status(200).json({
+      data: { signedOut: true }
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export { signIn, signOut };
