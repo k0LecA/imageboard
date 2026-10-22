@@ -1,13 +1,13 @@
 import pool from "../configs/dbConfig.js";
 
-const createSession = async ({ moderatorId, expiresAt }) => {
+const createSession = async ({ moderatorId, expiresAt, tokenHash }) => {
   const { rows } = await pool.query(
     `
-      INSERT INTO sessions (moderator_id, expires_at)
-      VALUES ($1, $2)
+      INSERT INTO sessions (moderator_id, expires_at, token_hash)
+      VALUES ($1, $2, $3)
       RETURNING *
     `,
-    [moderatorId, expiresAt],
+    [moderatorId, expiresAt, tokenHash],
   );
   return rows[0];
 };

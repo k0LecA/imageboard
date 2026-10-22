@@ -1,7 +1,7 @@
 import express from 'express';
 import { getThread,getThreadsByBoard, createThread, deleteThread } from '../controllers/threads.js';
 import postRoutes from './posts.js';
-import authCheck from '../middleware/authCheck.js';
+import authCheck from '../middleware/authMiddleware.js';
 import uploadFiles from '../middleware/uploadFiles.js';
 
 const router = express.Router({ mergeParams: true });

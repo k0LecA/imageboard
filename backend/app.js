@@ -5,7 +5,7 @@ import boardRoutes from './routes/boards.js'
 import authRoutes from './routes/auth.js'
 import miscRoutes from './routes/misc.js'
 import fileRoutes from './routes/files.js'
-import errorHandler from './middleware/errorHandler.js';
+import errorHandler from './middleware/errorMiddleware.js';
 
 const app = express();
 app.use(cors());

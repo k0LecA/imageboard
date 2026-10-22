@@ -2,7 +2,7 @@ import express from 'express';
 import { getAllBoards, createBoard, getBoardBySlug } from '../controllers/boards.js';
 import threadRoutes from './threads.js';
 import ipHashMiddleware from '../middleware/ipHash.js';
-import authCheck from '../middleware/authCheck.js';
+import authCheck from '../middleware/authMiddleware.js';
 
 const router = express.Router({ mergeParams: true });
 
