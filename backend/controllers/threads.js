@@ -1,4 +1,4 @@
-  import createHttpError from "../utils/httpError.js";
+import createHttpError from "../utils/httpError.js";
 import * as storageService from "../services/storageService.js";
 import * as threadModel from "../models/threads.js";
 import threadService from "../services/threadService.js";
