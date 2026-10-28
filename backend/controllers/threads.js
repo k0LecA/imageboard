@@ -31,7 +31,7 @@ const getThreadsByBoard = async (req, res, next) => {
 
 const createThread = async (req, res, next) => {
   const client = await pool.connect();
-  const { board_id: boardId, subject, message } = req.body;
+  const { board_id: boardId, message } = req.body;
   const uploadedFiles = [];
 
   try {
@@ -43,11 +43,11 @@ const createThread = async (req, res, next) => {
 
     const threadResult = await client.query(
       `
-        INSERT INTO threads (board_id, subject, is_pinned, is_locked)
-        VALUES ($1, $2, false, false)
+        INSERT INTO threads (board_id, is_pinned, is_locked)
+        VALUES ($1, false, false)
         RETURNING id
       `,
-      [boardId, subject],
+      [boardId],
     );
     const threadId = threadResult.rows[0].id;
 

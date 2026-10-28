@@ -46,10 +46,6 @@ const createThread = async ({ boardId, subject, isPinned, isLocked }) => {
   const columns = ["board_id"];
   const values = [boardId];
 
-  if (subject !== undefined) {
-    columns.push("subject");
-    values.push(subject);
-  }
   if (isPinned !== undefined) {
     columns.push("is_pinned");
     values.push(isPinned);
@@ -73,7 +69,6 @@ const updateThread = async ({ id, subject, isPinned, isLocked }) => {
   const updates = [];
   const values = [id];
   const fields = [
-    ["subject", subject],
     ["is_pinned", isPinned],
     ["is_locked", isLocked],
   ];
