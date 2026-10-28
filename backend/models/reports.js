@@ -1,11 +1,11 @@
 import pool from "../configs/dbConfig.js";
 
-const createReport = async ({ reporterIpHash, threadId, postId, reason }) => {
+const createReport = async ({ boardId, threadId, postId, fileId, reason }) => {
   const { rows } = await pool.query(
-    `INSERT INTO reports (reporter_ip_hash, thread_id, post_id, reason)
-     VALUES ($1, $2, $3, $4)
+    `INSERT INTO reports (board_id, thread_id, post_id, file_id, reason)
+     VALUES ($1, $2, $3, $4, $5)
      RETURNING *`,
-    [reporterIpHash, threadId ?? null, postId ?? null, reason],
+    [boardId, threadId ?? null, postId ?? null, fileId ?? null, reason],
   );
   return rows[0];
 };
@@ -15,13 +15,15 @@ const getReportById = async (id) => {
   return rows[0];
 };
 
-const getReports = async ({ status, threadId, postId } = {}) => {
+const getReports = async ({ boardId, status, threadId, postId, fileId } = {}) => {
   const filters = [];
   const values = [];
   for (const [column, value] of [
+    ["board_id", boardId],
     ["status", status],
     ["thread_id", threadId],
     ["post_id", postId],
+    ["file_id", fileId],
   ]) {
     if (value !== undefined) {
       values.push(value);

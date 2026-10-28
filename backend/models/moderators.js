@@ -1,8 +1,8 @@
 import pool from "../configs/dbConfig.js";
 
-const createModerator = async ({ username, passwordHash, role, boardId }) => {
-  const columns = ["username", "password_hash", "board_id"];
-  const values = [username, passwordHash, boardId ?? null];
+const createModerator = async ({ username, passwordHash, role }) => {
+  const columns = ["username", "password_hash"];
+  const values = [username, passwordHash];
 
   if (role !== undefined) {
     columns.push("role");
@@ -13,7 +13,7 @@ const createModerator = async ({ username, passwordHash, role, boardId }) => {
   const { rows } = await pool.query(
     `INSERT INTO moderators (${columns.join(", ")})
      VALUES (${placeholders.join(", ")})
-     RETURNING id`,
+     RETURNING id, username, role`,
     values,
   );
   return rows[0];
@@ -24,7 +24,10 @@ const getModeratorsByBoard = async (boardId) => {
     `
       SELECT id, username, role
       FROM moderators
-      WHERE board_id = $1
+      JOIN moderator_boards ON moderator_boards.moderator_id = moderators.id
+      WHERE moderator_boards.board_id = $1
+        AND moderators.deactivated_at IS NULL
+      ORDER BY moderators.id
     `,
     [boardId],
   );
@@ -65,16 +68,42 @@ const getModeratorById = async (id) => {
 
 const updateModerator = async (
   id,
-  { username, passwordHash, role, boardId },
+  {
+    username,
+    passwordHash,
+    role,
+    passwordChangedAt,
+    lastLoginAt,
+    failedLoginCount,
+    lockedUntil,
+    deactivatedAt,
+  },
 ) => {
+  const values = [id];
+  const updates = [];
+  for (const [column, value] of [
+    ["username", username],
+    ["password_hash", passwordHash],
+    ["role", role],
+    ["password_changed_at", passwordChangedAt],
+    ["last_login_at", lastLoginAt],
+    ["failed_login_count", failedLoginCount],
+    ["locked_until", lockedUntil],
+    ["deactivated_at", deactivatedAt],
+  ]) {
+    if (value !== undefined) {
+      values.push(value);
+      updates.push(`${column} = $${values.length}`);
+    }
+  }
+  if (updates.length === 0) return getModeratorById(id);
   const { rows } = await pool.query(
-    `
-      UPDATE moderators
-      SET username = $1, password_hash = $2, role = $3, board_id = $4
-      WHERE id = $5
-      RETURNING id, username, role
-    `,
-    [username, passwordHash, role, boardId, id],
+    `UPDATE moderators
+     SET ${updates.join(", ")}
+     WHERE id = $1
+     RETURNING id, username, role, created_at, password_changed_at,
+               last_login_at, failed_login_count, locked_until, deactivated_at`,
+    values,
   );
   return rows[0];
 };

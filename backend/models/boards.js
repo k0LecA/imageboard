@@ -29,10 +29,14 @@ const getBoardById = async (id) => {
   return rows[0];
 };
 
-const createBoard = async ({ slug, name, bumpLimit, maxThreads, theme }) => {
+const createBoard = async ({ slug, name, description, bumpLimit, maxThreads, theme }) => {
   const columns = ["slug", "name"];
   const values = [slug, name];
 
+  if (description !== undefined) {
+    columns.push("description");
+    values.push(description);
+  }
   if (bumpLimit !== undefined) {
     columns.push("bump_limit");
     values.push(bumpLimit);
@@ -56,11 +60,12 @@ const createBoard = async ({ slug, name, bumpLimit, maxThreads, theme }) => {
   return rows[0];
 };
 
-const updateBoardBySlug = async ({ slug, name, bumpLimit, maxThreads, theme }) => {
+const updateBoardBySlug = async ({ slug, name, description, bumpLimit, maxThreads, theme }) => {
   const updates = [];
   const values = [slug];
   const fields = [
     ["name", name],
+    ["description", description],
     ["bump_limit", bumpLimit],
     ["max_threads", maxThreads],
     ["theme", theme],

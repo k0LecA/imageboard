@@ -35,17 +35,17 @@ const getPostsByThreadId = async (threadId) => {
   return posts.map((p) => ({ ...p, files: filesByPost.get(p.id) ?? [] }));
 };
 
-const createPost = async ({ threadId, boardId, parentId, authorIpHash, message, file }) => {
+const createPost = async ({ threadId, boardId, isOp, message, file }) => {
   const client = await pool.connect();
 
   try {
     await client.query("BEGIN");
 
     const { rows } = await client.query(
-      `INSERT INTO posts (thread_id, board_id, parent_id, author_ip_hash, message)
-       VALUES ($1, $2, $3, $4, $5)
+      `INSERT INTO posts (thread_id, board_id, is_op, message)
+       VALUES ($1, $2, $3, $4)
        RETURNING *`,
-      [threadId, boardId, parentId ?? null, authorIpHash, message],
+      [threadId, boardId, isOp ?? false, message],
     );
     const post = rows[0];
 
