@@ -1,14 +1,10 @@
-import {
-  createPost as createPostRecord,
-  deletePost as deletePostRecord,
-  getPostsByThreadId,
-} from "../models/posts.js";
-import { deleteFile as deleteStoredFile, uploadFile } from "../services/storage.js";
+import * as postModel from "../models/posts.js";
+import * as storageService from "../services/storageService.js";
 import createHttpError from "../utils/httpError.js";
 
 const getAllPostsByThread = async (req, res, next) => {
   try {
-    const posts = await getPostsByThreadId(req.params.threadId);
+    const posts = await postModel.getPostsByThreadId(req.params.threadId);
     return res.status(200).json({ data: posts });
   } catch (error) {
     return next(error);
@@ -22,10 +18,10 @@ const createPost = async (req, res, next) => {
 
   try {
     if (req.file) {
-      uploadedFile = await uploadFile(req.file);
+      uploadedFile = await storageService.storeFile(req.file);
     }
 
-    const post = await createPostRecord({
+    const post = await postModel.createPost({
       threadId,
       boardId,
       authorIpHash: req.hashedIp,
@@ -36,7 +32,7 @@ const createPost = async (req, res, next) => {
   } catch (error) {
     if (uploadedFile) {
       try {
-        await deleteStoredFile(uploadedFile.s3Key);
+        await storageService.deleteStoredFile(uploadedFile.s3Key);
       } catch (cleanupError) {
         console.error("Failed to remove uploaded file after post creation failed:", cleanupError);
       }
@@ -47,7 +43,7 @@ const createPost = async (req, res, next) => {
 
 const deletePost = async (req, res, next) => {
   try {
-    const post = await deletePostRecord(req.params.postId);
+    const post = await postModel.deletePost(req.params.postId);
     if (!post) {
       return next(createHttpError(404, "Post not found"));
     }
