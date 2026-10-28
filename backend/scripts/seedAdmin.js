@@ -1,38 +1,34 @@
-import pool from "../configs/dbConfig.js";
-import {  register } from "../services/authService.js";
-import { getModeratorByUsername } from "../models/moderators.js";
-import dotenv from "dotenv";
+import 'dotenv/config';
+import bcrypt from 'bcryptjs';
+import pool from '../configs/dbConfig.js';
 
-dotenv.config();
+const username = process.env.ROOT_USERNAME;
+const password = process.env.ROOT_PASSWORD;
 
-const seedAdmin = async () => {
-    const username = process.env.ADMIN_USERNAME;
-    const password = process.env.ADMIN_PASSWORD;
+try {
+  if (!username || !password) {
+    throw new Error('ROOT_USERNAME and ROOT_PASSWORD are required');
+  }
 
-    if (!username || !password) {
-        throw new Error("Admin credentials are missing");
-    }
+  const { rows } = await pool.query(
+    "SELECT id FROM moderators WHERE role = 'ROOT' LIMIT 1"
+  );
 
-    const existingAdmin = await getModeratorByUsername(username);
-    if (existingAdmin) {
-        console.log("Admin already exists. Skipping seeding.");
-        return;
-    }
+  if (rows.length) {
+    console.log('ROOT already exists');
+  } else {
+    const hash = await bcrypt.hash(password, 10);
 
-    await register({
-        username,
-        password,
-        role: "admin"
-    });
+    await pool.query(
+      "INSERT INTO moderators (username, password_hash, role) VALUES ($1, $2, 'ROOT')",
+      [username, hash]
+    );
 
-    console.log("Admin seeded successfully");
-};
-
-seedAdmin()
-    .catch((error) => {
-        console.error("Seed failed:", error);
-        process.exitCode = 1;
-    })
-    .finally(async () => {
-        await pool.end();
-    });
+    console.log('ROOT created');
+  }
+} catch (err) {
+  console.error(err.message);
+  process.exitCode = 1;
+} finally {
+  await pool.end();
+}
