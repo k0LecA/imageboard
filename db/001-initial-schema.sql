@@ -12,7 +12,6 @@ CREATE TABLE boards (
 CREATE TABLE threads (
     id            BIGSERIAL PRIMARY KEY,
     board_id      INTEGER NOT NULL REFERENCES boards(id) ON DELETE CASCADE,
-    subject       VARCHAR(200),
     is_pinned     BOOLEAN NOT NULL DEFAULT false,
     is_locked     BOOLEAN NOT NULL DEFAULT false,
     posts_count   INTEGER NOT NULL DEFAULT 0,
