@@ -70,6 +70,8 @@ Authentication currently checks that a session is valid; role and board-scope au
 
 The API is mounted at `/api`. Successful JSON responses use `{ "data": ... }`; errors use `{ "error": "..." }`.
 
+See [API Reference and Examples](./API-REFERENCE.md) for formatted `curl` requests, payloads, and response examples.
+
 | Method | Path | Purpose | Access |
 | --- | --- | --- | --- |
 | `GET` | `/api/boards` | List boards | Public |
