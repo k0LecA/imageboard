@@ -2,8 +2,10 @@ import createHttpError from "../utils/httpError.js";
 import * as storageService from "../services/storageService.js";
 import * as threadModel from "../models/threads.js";
 import threadService from "../services/threadService.js";
+import * as boardModel from "../models/boards.js";
 
 const getThreadById = async (req, res, next) => {
+  console.log('Fetching thread with ID:', req.params.threadId);
   try {
     const thread = await threadModel.getThreadById(req.params.threadId);
     if (!thread) {
@@ -25,20 +27,25 @@ const getThreadsByBoard = async (req, res, next) => {
 };
 
 const createThread = async (req, res, next) => {
-  const { board_id: boardId, message, isPinned, isLocked } = req.body;
+  const { message } = req.body;
+  const { slug } = req.params
+  console.log('Request body:', req.body);
+  const board = await boardModel.getBoardBySlug(slug);
   const uploadedFiles = [];
+
+  console.log('Creating thread with message:', message);
+  console.log('slug:', slug);
+  console.log('board:', board.id);
+
 
   try {
     for (const file of req.files ?? []) {
-      uploadedFiles.push(await storageService.storeFile(file));
+      uploadedFiles.push(await storageService.uploadFile(file));
     }
 
     const threadId = await threadService.createThread({
-      boardId,
+      boardId: board.id,
       message,
-      isPinned,
-      isLocked,
-      authorIpHash: req.hashedIp,
       files: uploadedFiles
     });
 
@@ -46,7 +53,7 @@ const createThread = async (req, res, next) => {
   } catch (error) {
     for (const file of uploadedFiles) {
       try {
-        await storageService.deleteStoredFile(file.s3Key);
+        await storageService.deleteFile(file.s3Key);
       } catch (cleanupError) {
         console.error('File cleanup failed:', cleanupError);
       }

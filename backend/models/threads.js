@@ -42,21 +42,13 @@ const getThreadsByBoardId = async (boardId) => {
   return rows;
 };
 
-const createThread = async ({ boardId, isPinned, isLocked }) => {
+const createThread = async ({ boardId, db = pool }) => {
   const columns = ["board_id"];
   const values = [boardId];
 
-  if (isPinned !== undefined) {
-    columns.push("is_pinned");
-    values.push(isPinned);
-  }
-  if (isLocked !== undefined) {
-    columns.push("is_locked");
-    values.push(isLocked);
-  }
 
   const placeholders = values.map((_, index) => `$${index + 1}`);
-  const { rows } = await pool.query(
+  const { rows } = await db.query(
     `INSERT INTO threads (${columns.join(", ")})
      VALUES (${placeholders.join(", ")})
      RETURNING id`,

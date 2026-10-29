@@ -11,19 +11,19 @@ const createThread = async (data) => {
 
     const threadResult = await threadModel.createThread({
       boardId: data.boardId,
-      isPinned: data.isPinned,
-      isLocked: data.isLocked,
-      db: client
+      message: data.message,
+      db: client,
     });
-    const threadId = threadResult.rows[0].id;
+    const threadId = threadResult.id;
 
     const postResult = await postModel.createPost({
       threadId,
       boardId: data.boardId,
       message: data.message,
-      db: client
+      isOp: true,
+      db: client,
     });
-    const postId = postResult.rows[0].id;
+    const postId = postResult.id;
 
     for (const file of data.files ?? []) {
       await fileModel.createFile({ postId, ...file, db: client });

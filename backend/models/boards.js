@@ -17,6 +17,18 @@ const getBoardBySlug = async (slug) => {
   return rows[0];
 };
 
+const getBoardIdBySlug = async (slug) => {
+  const { rows } = await pool.query(
+    `
+      SELECT id
+      FROM boards
+      WHERE slug = $1
+    `,
+    [slug],
+  );
+  return rows[0].id;
+};
+
 const getBoardById = async (id) => {
   const { rows } = await pool.query(
     `
@@ -108,6 +120,7 @@ const deleteBoardBySlug = async (slug) => {
 export {
   getBoards,
   getBoardBySlug,
+  getBoardIdBySlug,
   getBoardById,
   createBoard,
   updateBoardBySlug,

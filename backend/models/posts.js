@@ -9,7 +9,7 @@ const getPosts = async () => {
 const getPostsByThreadId = async (threadId) => {
   const { rows: posts } = await pool.query(
     `
-      SELECT *
+      SELECT id, thread_id, board_id, is_op, message, created_at
       FROM posts
       WHERE thread_id = $1
     `,
@@ -35,31 +35,39 @@ const getPostsByThreadId = async (threadId) => {
   return posts.map((p) => ({ ...p, files: filesByPost.get(p.id) ?? [] }));
 };
 
-const createPost = async ({ threadId, boardId, isOp, message, file }) => {
+const createPostWithClient = async (db, { threadId, boardId, isOp, message, file }) => {
+  const { rows } = await db.query(
+    `INSERT INTO posts (thread_id, board_id, is_op, message)
+     VALUES ($1, $2, $3, $4)
+     RETURNING *`,
+    [threadId, boardId, isOp ?? false, message],
+  );
+  const post = rows[0];
+
+  if (file) {
+    const savedFile = await createFile({
+      postId: post.id,
+      ...file,
+      db,
+    });
+    post.files = [savedFile];
+  } else {
+    post.files = [];
+  }
+
+  return post;
+};
+
+const createPost = async ({ threadId, boardId, isOp, message, file, db }) => {
+  if (db) {
+    return createPostWithClient(db, { threadId, boardId, isOp, message, file });
+  }
+
   const client = await pool.connect();
 
   try {
     await client.query("BEGIN");
-
-    const { rows } = await client.query(
-      `INSERT INTO posts (thread_id, board_id, is_op, message)
-       VALUES ($1, $2, $3, $4)
-       RETURNING *`,
-      [threadId, boardId, isOp ?? false, message],
-    );
-    const post = rows[0];
-
-    if (file) {
-      const savedFile = await createFile({
-        postId: post.id,
-        ...file,
-        db: client,
-      });
-      post.files = [savedFile];
-    } else {
-      post.files = [];
-    }
-
+    const post = await createPostWithClient(client, { threadId, boardId, isOp, message, file });
     await client.query("COMMIT");
     return post;
   } catch (error) {

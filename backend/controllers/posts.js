@@ -1,6 +1,7 @@
 import * as postModel from "../models/posts.js";
 import * as storageService from "../services/storageService.js";
 import createHttpError from "../utils/httpError.js";
+import * as boardModel from "../models/boards.js";
 
 const getAllPostsByThread = async (req, res, next) => {
   try {
@@ -12,13 +13,15 @@ const getAllPostsByThread = async (req, res, next) => {
 };
 
 const createPost = async (req, res, next) => {
-  const { boardId, message } = req.body;
-  const { threadId } = req.params;
+  const { message } = req.body;
+  const { slug,threadId } = req.params;
+  const board = await boardModel.getBoardBySlug(slug);
+  const boardId = board.id;
   let uploadedFile;
 
   try {
     if (req.file) {
-      uploadedFile = await storageService.storeFile(req.file);
+      uploadedFile = await storageService.uploadFile(req.file);
     }
 
     const post = await postModel.createPost({
@@ -32,7 +35,7 @@ const createPost = async (req, res, next) => {
   } catch (error) {
     if (uploadedFile) {
       try {
-        await storageService.deleteStoredFile(uploadedFile.s3Key);
+        await storageService.deleteFile(uploadedFile.s3Key);
       } catch (cleanupError) {
         console.error("Failed to remove uploaded file after post creation failed:", cleanupError);
       }
