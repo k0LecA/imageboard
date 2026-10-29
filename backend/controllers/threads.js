@@ -3,7 +3,7 @@ import * as storageService from "../services/storageService.js";
 import * as threadModel from "../models/threads.js";
 import threadService from "../services/threadService.js";
 
-const getThread = async (req, res, next) => {
+const getThreadById = async (req, res, next) => {
   try {
     const thread = await threadModel.getThreadById(req.params.threadId);
     if (!thread) {
@@ -56,4 +56,41 @@ const createThread = async (req, res, next) => {
   }
 };
 
-export { getThread, getThreadsByBoard, createThread };
+const updateThreadById = async (req, res, next) => {
+  const { threadId } = req.params;
+  const { message, isPinned, isLocked } = req.body;
+
+  try {
+    const updatedThread = await threadModel.updateThreadById(threadId, {
+      message,
+      isPinned,
+      isLocked
+    });
+
+    if (!updatedThread) {
+      return next(createHttpError(404, "Thread not found"));
+    }
+
+    return res.status(200).json({ data: updatedThread });
+  } catch (error) {
+    return next(error);
+  }
+}
+
+const deleteThreadById = async (req, res, next) => {
+  const { threadId } = req.params;
+
+  try {
+    const deletedThread = await threadModel.deleteThreadById(threadId);
+
+    if (!deletedThread) {
+      return next(createHttpError(404, "Thread not found"));
+    }
+
+    return res.status(200).json({ data: deletedThread });
+  } catch (error) {
+    return next(error);
+  }
+}
+
+export { getThreadById, getThreadsByBoard, createThread, updateThreadById, deleteThreadById };

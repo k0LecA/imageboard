@@ -42,7 +42,7 @@ const getThreadsByBoardId = async (boardId) => {
   return rows;
 };
 
-const createThread = async ({ boardId, subject, isPinned, isLocked }) => {
+const createThread = async ({ boardId, isPinned, isLocked }) => {
   const columns = ["board_id"];
   const values = [boardId];
 
@@ -65,7 +65,7 @@ const createThread = async ({ boardId, subject, isPinned, isLocked }) => {
   return rows[0];
 };
 
-const updateThread = async ({ id, subject, isPinned, isLocked }) => {
+const updateThread = async ({ id, isPinned, isLocked }) => {
   const updates = [];
   const values = [id];
   const fields = [

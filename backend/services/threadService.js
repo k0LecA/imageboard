@@ -38,3 +38,5 @@ const createThread = async (data) => {
     client.release();
   }
 };
+
+export default { createThread };

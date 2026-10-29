@@ -1,14 +1,14 @@
 import pool from "../configs/dbConfig.js";
 
 const getBoards = async () => {
-  const { rows } = await pool.query("SELECT * FROM boards");
+  const { rows } = await pool.query("SELECT id, slug, name, description, theme FROM boards");
   return rows;
 };
 
 const getBoardBySlug = async (slug) => {
   const { rows } = await pool.query(
     `
-      SELECT *
+      SELECT id, slug, name, description, theme
       FROM boards
       WHERE slug = $1
     `,
@@ -20,7 +20,7 @@ const getBoardBySlug = async (slug) => {
 const getBoardById = async (id) => {
   const { rows } = await pool.query(
     `
-      SELECT *
+      SELECT id, slug, name, description, theme
       FROM boards
       WHERE id = $1
     `,
@@ -77,7 +77,10 @@ const updateBoardBySlug = async ({ slug, name, description, bumpLimit, maxThread
       updates.push(`${column} = $${values.length}`);
     }
   }
-
+  // returning different set of columns
+  // getBoardBySlug returns id, slug, name, description, theme
+  // if updates are made then returning *
+  // keep in mind that the returned object will have different properties based on whether updates were made or not
   if (updates.length === 0) return getBoardBySlug(slug);
 
   const { rows } = await pool.query(
@@ -90,7 +93,7 @@ const updateBoardBySlug = async ({ slug, name, description, bumpLimit, maxThread
   return rows[0];
 };
 
-const deleteBoard = async (slug) => {
+const deleteBoardBySlug = async (slug) => {
   const { rows } = await pool.query(
     `
       DELETE FROM boards
@@ -108,5 +111,5 @@ export {
   getBoardById,
   createBoard,
   updateBoardBySlug,
-  deleteBoard,
+  deleteBoardBySlug,
 };

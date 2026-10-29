@@ -1,5 +1,5 @@
 import * as fileModel from "../models/files.js";
-import { getFile as getStoredFile } from "../services/storage.js";
+import { getFile as getStoredFile } from "../services/storageService.js";
 import createHttpError from "../utils/httpError.js";
 
 const getFile = async (req, res, next) => {

@@ -13,11 +13,11 @@ const validateBoard = (req, res, next) => {
     return res.status(400).json({ error: 'Invalid description' });
   }
 
-  if (!Number.isInteger(bump_limit) || bump_limit < 0) {
+  if (bump_limit !== undefined && (!Number.isInteger(bump_limit) || bump_limit < 0)) {
     return res.status(400).json({ error: 'Invalid bump_limit' });
   }
 
-  if (!Number.isInteger(max_threads) || max_threads < 0) {
+  if (max_threads !== undefined && (!Number.isInteger(max_threads) || max_threads < 0)) {
     return res.status(400).json({ error: 'Invalid max_threads' });
   }
 
