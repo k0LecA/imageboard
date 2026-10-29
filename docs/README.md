@@ -1,22 +1,25 @@
-# Project documentation
+# Database documentation
 
-This directory contains the PostgreSQL schema and its entity-relationship diagram for the imageboard backend.
+This directory contains SQL reference files and an entity-relationship diagram for the imageboard database.
 
-- [`db.sql`](./db.sql) defines the tables, relationships, defaults, and indexes. Apply it to an empty database during setup; Docker Compose starts PostgreSQL but does not load this schema automatically. See the [backend setup guide](../backend/README.md).
-- [`er.png`](./er.png) shows the database entities and their relationships.
+## Canonical schema
+
+Docker Compose applies [`../db/001-initial-schema.sql`](../db/001-initial-schema.sql) when PostgreSQL starts with an empty data directory. This is the canonical bootstrap schema for the current application. It is not a migration and will not update an existing database.
+
+[`db.sql`](./db.sql) and [`new_db.sql`](./new_db.sql) are older schema drafts kept for reference. They differ from the current Compose schema and should not be used to initialize the current application. See the [backend guide](../backend/README.md) for local setup and the test database.
 
 ## Entity-relationship diagram
 
 ![Entity-relationship diagram of the imageboard database](./er.png)
 
+The diagram is a reference and may not reflect every table in the current bootstrap schema. Use `../db/001-initial-schema.sql` as the source of truth.
+
 ## Schema overview
 
-The content model is `boards` → `threads` → `posts`. Each post belongs to a board and thread, and a composite foreign key keeps those board references consistent. Posts may reference a parent post, have a generated full-text search vector, and can have associated file records. Moderators may be associated with a board; UUID sessions belong to moderators.
+The content model is `boards` → `threads` → `posts`. Posts belong to both a board and a thread, with a composite foreign key keeping those board references consistent. Posts have a generated full-text search vector and may have associated file records. Uploaded image objects are stored in MinIO; PostgreSQL stores their metadata and object keys.
 
-Each board can have one banner stored in MinIO with metadata in `board_banners`, plus an ordered list of entries in `board_rules`. `reports` can target a thread or post. `bans` support board-scoped or global IP-hash bans with optional expiration. `moderation_actions` records moderator actions with JSONB details and keeps target IDs as audit values so history can outlive deleted content.
+Moderator records can be associated with boards. `sessions` stores UUID-based moderator sessions. `moderator_invitations` and `moderator_invitation_boards` provide schema support for the planned invitation-link registration flow. Invitation creation, redemption, and moderator registration endpoints have not been implemented yet.
 
-Deleting a board cascades to its threads, posts, files, and board-scoped moderators. Deleting a thread cascades to its posts and files. Deleting a post sets `parent_id` to `NULL` on replies that referenced it.
+The schema also includes tables for board banners and rules, reports, and moderation actions. These tables are database support only; complete application workflows and API routes are not available yet. The current bootstrap schema does not include a `bans` table.
 
-Indexes support thread ordering by board, post lookup by thread and IP hash, full-text search over messages, file lookup by post, session expiration, report queues, ban checks, and moderation history. `message_tsv` is generated from each post's message using PostgreSQL's `simple` text configuration.
-
-`db.sql` is a bootstrap schema for a new, empty database, not a migration for an existing database. The new moderation, banner, and board-rule tables are schema support; their API endpoints and application workflows still need to be implemented.
+Foreign keys define cleanup behavior, including cascading deletion of a board's threads and posts. Indexes support board thread catalogs, post lookup, full-text search, file lookup, session expiration, report queues, and moderation history. `message_tsv` is generated from each post's message using PostgreSQL's `simple` text configuration.
