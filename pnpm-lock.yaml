@@ -39,12 +39,18 @@ importers:
         specifier: ^8.23.1
         version: 8.23.1
     devDependencies:
+      '@eslint/js':
+        specifier: ^10.0.1
+        version: 10.0.1(eslint@10.14.0(supports-color@7.2.0))
       dependency-cruiser:
         specifier: ^18.7.2
         version: 18.7.2
       eslint:
         specifier: ^10.14.0
         version: 10.14.0(supports-color@7.2.0)
+      globals:
+        specifier: ^17.13.0
+        version: 17.13.0
       vitest:
         specifier: ^5.0.3
         version: 5.0.3(@types/node@24.19.1)(vite@8.3.3(@types/node@24.19.1))
@@ -1896,6 +1902,10 @@ snapshots:
   '@eslint/js@10.0.1(eslint@10.12.0(supports-color@7.2.0))':
     optionalDependencies:
       eslint: 10.12.0(supports-color@7.2.0)
+
+  '@eslint/js@10.0.1(eslint@10.14.0(supports-color@7.2.0))':
+    optionalDependencies:
+      eslint: 10.14.0(supports-color@7.2.0)
 
   '@eslint/object-schema@3.0.5': {}
 
