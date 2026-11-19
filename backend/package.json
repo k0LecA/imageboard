@@ -23,6 +23,8 @@
     "pg": "^8.23.1"
   },
   "devDependencies": {
+    "dependency-cruiser": "^18.7.2",
+    "eslint": "^10.14.0",
     "vitest": "^5.0.3"
   }
 }
