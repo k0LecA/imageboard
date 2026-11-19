@@ -60,3 +60,11 @@ minio-data/
 AGENTS.md
 
 .vitest/
+
+# SonarQube / SonarScanner
+.scannerwork/
+.sonar/
+
+
+# Coverage reports
+coverage/
