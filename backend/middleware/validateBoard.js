@@ -5,8 +5,14 @@ const validateBoard = (req, res, next) => {
     return res.status(400).json({ error: 'Invalid slug' });
   }
 
-  if (!name || typeof name !== 'string' || name.length < 2 || name.length > 100) {
+  if (!name || typeof name !== 'string') {
     return res.status(400).json({ error: 'Invalid name' });
+  }
+  if (name.length < 2) {
+    return res.status(400).json({ error: 'Name is too short' });
+  }  
+  if (name.length>100){
+    return res.status(400).json({ error: 'Name is too long' });
   }
 
   if (!description || typeof description !== 'string' || description.length > 255) {
